@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_mobile/features/healthrecords/view/widgets/health_record_card.dart';
+import 'package:frontend_mobile/features/healthrecords/view/widgets/lab_results.dart';
+import 'package:frontend_mobile/features/healthrecords/view/widgets/prescriptions_history.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HealthRecordsPage extends StatelessWidget {
+class HealthRecordsPage extends StatefulWidget {
   const HealthRecordsPage({super.key});
 
+  @override
+  State<HealthRecordsPage> createState() => _HealthRecordsPageState();
+}
+
+class _HealthRecordsPageState extends State<HealthRecordsPage> {
+  String? _selectedFilter='Prescriptions';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,19 +38,30 @@ class HealthRecordsPage extends StatelessWidget {
               const SizedBox(
                 height: 30,
               ),
-              const HealthRecordCard(),
+              Wrap(
+                spacing: 8.0,
+                children: <String>['Prescriptions', 'Lab Reports'].map(
+                  (String name) {
+                    return FilterChip(
+                      label: Text(name),
+                      selected: _selectedFilter == name,
+                      onSelected: (bool selected) {
+                        setState(
+                          () {
+                            _selectedFilter = name;
+                          },
+                        );
+                      },
+                    );
+                  },
+                ).toList(),
+              ),
               const SizedBox(
                 height: 20,
               ),
-              const HealthRecordCard(),
-              const SizedBox(
-                height: 20,
-              ),
-              const HealthRecordCard(),
-              const SizedBox(
-                height: 20,
-              ),
-              const HealthRecordCard()
+              _selectedFilter == 'Prescriptions'
+                  ? const PrescriptionsHistory()
+                  : const LabResults(),
             ],
           ),
         ),
