@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/features/auth/view/screens/login_page.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_big_text.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_button.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_form_field.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/divider_with_or.dart';
+import 'package:frontend_mobile/routes/route_constants.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignupPage extends StatefulWidget {
@@ -266,7 +269,7 @@ class _SignupPageState extends State<SignupPage> {
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap:()=>context.goNamed(RouteConstants.login),
                       child: const Text(
                         'Signin',
                         style: TextStyle(
