@@ -6,6 +6,8 @@ import 'package:frontend_mobile/features/common/root_home_page.dart';
 import 'package:frontend_mobile/features/healthrecords/view/screens/add_records_page.dart';
 import 'package:frontend_mobile/features/healthrecords/view/screens/health_records_page.dart';
 import 'package:frontend_mobile/features/healthrecords/view/screens/prescription_page.dart';
+import 'package:frontend_mobile/features/home/view/screens/home_screen.dart';
+import 'package:frontend_mobile/features/profile/view/screens/profile_page.dart';
 import 'package:frontend_mobile/routes/route_constants.dart';
 import 'package:go_router/go_router.dart';
 
@@ -64,6 +66,20 @@ class AppRouter {
           child: RootHomePage(),
         );
       },),
+      GoRoute(
+        name: RouteConstants.homePage,
+        path: '/homePage',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: HomeScreen(),
+        ),
+      ),
+      GoRoute(
+        name: RouteConstants.profilePage,
+        path: '/profilePage',
+        pageBuilder: (context, state) => const MaterialPage(
+          child: ProfilePage(),
+        ),
+      )
     ],
   );
 }

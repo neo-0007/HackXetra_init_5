@@ -6,4 +6,6 @@ class RouteConstants {
   static const String addRecord = '/addRecord';
   static const String prescription = '/prescription';
   static const String rootHomePage = '/rootHomePage';
+  static const String homePage = '/homePage';
+  static const String profilePage = '/profilePage';
 }
