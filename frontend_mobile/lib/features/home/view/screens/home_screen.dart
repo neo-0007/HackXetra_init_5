@@ -12,20 +12,20 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 232, 230, 230),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const BigText(
+              BigText(
                 text: 'Prescriptrix',
                 fontSize: 25,
                 color: Color.fromARGB(255, 0, 89, 255),
               ),
-              const SizedBox(
+              SizedBox(
                 height: 20,
               ),
-              const HomePageCarousal(),
+              HomePageCarousal(),
               SizedBox(
                 height: 20,
               ),
