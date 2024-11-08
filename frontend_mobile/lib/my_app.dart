@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_mobile/features/auth/view/screens/login_page.dart';
-import 'package:frontend_mobile/features/auth/view/screens/signup_page.dart';
-import 'package:frontend_mobile/features/auth/view/screens/user_selection_page.dart';
+import 'package:frontend_mobile/routes/app_router.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final _myAppRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'My App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SignupPage(),
+      routerDelegate: _myAppRouter.router.routerDelegate,
+      routeInformationParser: _myAppRouter.router.routeInformationParser,
+      routeInformationProvider: _myAppRouter.router.routeInformationProvider,
     );
   }
 }
