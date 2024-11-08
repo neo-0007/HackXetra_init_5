@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/features/auth/view/widgets/auth_big_text.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,17 +22,8 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             //Product Logo
-            //Welcome text
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children:[ 
-                Text(
-                'Welcome',
-                style: GoogleFonts.poppins(
-                    
-                    fontSize: 27.25, fontWeight: FontWeight.bold, color: Colors.black),
-              ),]
-            ),
+           //Welcome text
+           const AuthBigText(text: 'Welcome'),
             const SizedBox(height: 40),
             //User button
             AuthButton(buttonText: 'Continue as User', onPressed: (){}),
