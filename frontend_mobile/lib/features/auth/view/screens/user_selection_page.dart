@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_big_text.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_button.dart';
-import 'package:frontend_mobile/routes/app_router.dart';
 import 'package:frontend_mobile/routes/route_constants.dart';
 import 'package:go_router/go_router.dart';
 
