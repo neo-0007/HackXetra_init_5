@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_mobile/features/healthrecords/view/widgets/big_text.dart';
-import 'package:frontend_mobile/features/healthrecords/view/widgets/small_text.dart';
+import 'package:frontend_mobile/features/common/widgets/big_text.dart';
+import 'package:frontend_mobile/features/common/widgets/small_text.dart';
 
 class PrescriptionPage extends StatelessWidget {
   const PrescriptionPage({super.key});
