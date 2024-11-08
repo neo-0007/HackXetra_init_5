@@ -4,4 +4,5 @@ class RouteConstants {
   static const String signup = '/signup';
   static const String healthRecords = '/healthRecords';
   static const String addRecord = '/addRecord';
+  static const String prescription = '/prescription';
 }
