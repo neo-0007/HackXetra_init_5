@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/features/auth/view/screens/login_page.dart';
+import 'package:frontend_mobile/features/auth/view/screens/signup_page.dart';
 import 'package:frontend_mobile/features/auth/view/screens/user_selection_page.dart';
 
 class MyApp extends StatelessWidget {
@@ -11,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const UserSelectionPage(),
+      home: const SignupPage(),
     );
   }
 }

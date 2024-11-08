@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -38,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
             AuthFormField(
               controller: passwordController,
               hintText: 'Password',
+              obscureText: true,
               hintIcon: Icons.lock,
             ),
             const SizedBox(
@@ -95,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                 )),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             //Signup button and text

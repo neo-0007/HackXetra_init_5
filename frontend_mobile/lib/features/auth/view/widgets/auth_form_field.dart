@@ -40,6 +40,7 @@ class AuthFormField extends StatelessWidget {
             ),
             TextFormField(
               controller: controller,
+              obscureText: obscureText!,
               decoration: InputDecoration(
                 prefixIcon:(hintIcon!=null)?Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
