@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend_mobile/features/auth/view/screens/login_page.dart';
 import 'package:frontend_mobile/features/auth/view/screens/signup_page.dart';
 import 'package:frontend_mobile/features/auth/view/screens/user_selection_page.dart';
+import 'package:frontend_mobile/features/common/root_home_page.dart';
 import 'package:frontend_mobile/features/healthrecords/view/screens/add_records_page.dart';
 import 'package:frontend_mobile/features/healthrecords/view/screens/health_records_page.dart';
 import 'package:frontend_mobile/features/healthrecords/view/screens/prescription_page.dart';
@@ -56,6 +57,13 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(path: '/rootHomePage', 
+      name: RouteConstants.rootHomePage,
+      pageBuilder: (context, state) {     
+        return const MaterialPage(
+          child: RootHomePage(),
+        );
+      },),
     ],
   );
 }
