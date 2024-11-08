@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_big_text.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_button.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:frontend_mobile/routes/app_router.dart';
+import 'package:frontend_mobile/routes/route_constants.dart';
+import 'package:go_router/go_router.dart';
 
 class UserSelectionPage extends StatefulWidget {
   const UserSelectionPage({super.key});
@@ -26,7 +28,9 @@ class _UserSelectionPageState extends State<UserSelectionPage> {
            const AuthBigText(text: 'Welcome'),
             const SizedBox(height: 40),
             //User button
-            AuthButton(buttonText: 'Continue as User', onPressed: (){}),
+            AuthButton(buttonText: 'Continue as User', onPressed: () =>
+              context.goNamed(RouteConstants.login)
+            ),
             const SizedBox(height: 30),
             //Doctor button
             AuthButton(buttonText: 'Continue as Doctor', onPressed: (){}),
