@@ -31,7 +31,7 @@ class HealthRecordButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
             ),
           ),
-          onPressed: () {},
+          onPressed: onPressed,
           child: Text(
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

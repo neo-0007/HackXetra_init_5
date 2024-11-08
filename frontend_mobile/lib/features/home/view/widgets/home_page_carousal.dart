@@ -53,7 +53,7 @@ class _HomePageCarousalState extends State<HomePageCarousal> {
             );
           }).toList(),
           options: CarouselOptions(
-            height: 250.0,
+            height: 200.0,
             autoPlay: true,
             enlargeCenterPage: true,
             viewportFraction: 0.9,

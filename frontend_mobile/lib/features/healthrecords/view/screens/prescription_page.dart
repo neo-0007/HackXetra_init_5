@@ -16,7 +16,7 @@ class PrescriptionPage extends StatelessWidget {
           children: [
             BigText(text: 'Patient\'s Details',color: Color.fromARGB(255, 0, 98, 255),fontSize: 20,),
             SizedBox(
-              height: 7,
+              height: 15,
             ),
             SmallText(text: 'Name: John Doe'),
             SizedBox(

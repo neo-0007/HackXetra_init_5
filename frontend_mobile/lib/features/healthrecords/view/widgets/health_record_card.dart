@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/features/auth/view/screens/login_page.dart';
 import 'package:frontend_mobile/features/healthrecords/view/widgets/health_record_button.dart';
+import 'package:frontend_mobile/routes/route_constants.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HealthRecordCard extends StatelessWidget {
@@ -10,7 +13,7 @@ class HealthRecordCard extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return Container(
         color: Colors.white,
-        height: screenSize.height/4.7,
+        height: screenSize.height / 4.7,
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -41,9 +44,22 @@ class HealthRecordCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Expanded(child: HealthRecordButton(buttonText: 'Digital Record',onPressed: (){},)),
-                  const SizedBox(width: 30,),
-                  Expanded(child: HealthRecordButton(buttonText: 'Original Prescription',onPressed: (){},buttonColor: Colors.green,))
+                  Expanded(
+                    child: HealthRecordButton(
+                      buttonText: 'Digital Record',
+                      onPressed: () =>
+                          context.goNamed(RouteConstants.prescription),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 30,
+                  ),
+                  Expanded(
+                      child: HealthRecordButton(
+                    buttonText: 'Original Prescription',
+                    onPressed: () {},
+                    buttonColor: Colors.green,
+                  ))
                 ],
               )
             ],
