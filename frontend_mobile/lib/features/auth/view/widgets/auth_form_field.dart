@@ -7,7 +7,7 @@ class AuthFormField extends StatelessWidget {
     required this.controller,
     this.topText,
     this.hintIcon,
-    this.obscureText=true,
+    this.obscureText=false,
   });
 
   final String? hintText;
