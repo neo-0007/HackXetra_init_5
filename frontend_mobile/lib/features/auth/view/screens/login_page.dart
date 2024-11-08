@@ -47,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
               height: 30,
             ),
             //Login button
-            AuthButton(buttonText: 'Login', onPressed: () {}),
+            AuthButton(buttonText: 'Login', onPressed: () => context.goNamed(RouteConstants.rootHomePage)),
             const SizedBox(
               height: 20,
             ),

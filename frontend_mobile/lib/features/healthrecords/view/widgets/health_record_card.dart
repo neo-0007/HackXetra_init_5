@@ -7,9 +7,10 @@ class HealthRecordCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     return Container(
         color: Colors.white,
-        height: 150,
+        height: screenSize.height/4.7,
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -40,9 +41,9 @@ class HealthRecordCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  HealthRecordButton(buttonText: 'Digital Record',onPressed: (){},),
+                  Expanded(child: HealthRecordButton(buttonText: 'Digital Record',onPressed: (){},)),
                   const SizedBox(width: 30,),
-                  HealthRecordButton(buttonText: 'Original Prescription',onPressed: (){},buttonColor: Colors.green,)
+                  Expanded(child: HealthRecordButton(buttonText: 'Original Prescription',onPressed: (){},buttonColor: Colors.green,))
                 ],
               )
             ],

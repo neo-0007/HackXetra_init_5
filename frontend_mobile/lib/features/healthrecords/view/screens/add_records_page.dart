@@ -56,7 +56,7 @@ class _AddRecordsPageState extends State<AddRecordsPage> {
             const SizedBox(
               height: 20,
             ),
-            HealthRecordButton(buttonText:'Upload', onPressed: (){})
+            SizedBox(height:30,width: MediaQuery.sizeOf(context).width-90,child: HealthRecordButton(buttonText:'Upload', onPressed: (){}))
           ],
         ),
       ),

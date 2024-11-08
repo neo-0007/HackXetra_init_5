@@ -9,7 +9,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: const Color.fromARGB(255, 232, 230, 230),
+      backgroundColor: Color.fromARGB(255, 232, 230, 230),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
@@ -17,6 +17,9 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 20,
+              ),
               BigText(
                 text: 'Prescriptrix',
                 fontSize: 25,
@@ -27,7 +30,7 @@ class HomeScreen extends StatelessWidget {
               ),
               HomePageCarousal(),
               SizedBox(
-                height: 20,
+                height: 40,
               ),
               BigText(text: 'Daily Dosages'),
               SizedBox(

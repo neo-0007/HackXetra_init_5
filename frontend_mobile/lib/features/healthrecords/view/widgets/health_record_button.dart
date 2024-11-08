@@ -15,24 +15,35 @@ class HealthRecordButton extends StatelessWidget {
   final Color textColor;
   final void Function() onPressed;
 
+
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: buttonColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-      ),
-      onPressed: () {},
-      child: Text(
-        buttonText,
-        style: GoogleFonts.poppins(
-          color: textColor,
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
+
+  final screenSize = MediaQuery.sizeOf(context);
+    return 
+      Container(
+        height: 25,
+        width: double.infinity,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: buttonColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          onPressed: () {},
+          child: Text(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            buttonText,
+            style: GoogleFonts.poppins(
+              color: textColor,
+              fontSize: screenSize.width/40,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        
+            ),
+      );
   }
 }
