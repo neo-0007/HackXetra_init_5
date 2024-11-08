@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/features/healthrecords/view/screens/add_records_page.dart';
 import 'package:frontend_mobile/features/healthrecords/view/screens/health_records_page.dart';
+import 'package:frontend_mobile/features/home/view/screens/home_screen.dart';
+import 'package:frontend_mobile/features/profile/view/screens/profile_page.dart';
 
 class RootHomePage extends StatefulWidget {
   const RootHomePage({super.key});
@@ -13,8 +15,10 @@ class _RootHomePageState extends State<RootHomePage> {
   int _selectedIndex = 0;
 
   List<Widget> screens = <Widget>[
+    const HomeScreen(),
     const HealthRecordsPage(),
-    const AddRecordsPage()
+    const AddRecordsPage(),
+    const ProfilePage(),
   ];
 
   @override
