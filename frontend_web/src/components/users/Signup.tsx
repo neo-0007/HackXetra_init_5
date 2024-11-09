@@ -6,29 +6,47 @@ import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const SignupForm: React.FC = () => {
-	const [signup, setSignup] = useState({
-		firstName: "",
-		lastName: "",
-		dob: "",
-		gender: "",
-		phone: "",
-		email: "",
-		address1: "",
-		address2: "",
-		city: "",
-		pin: "",
-		district: "",
-		state: "",
-		country: "",
-		password: "",
-		confirmPassword: "",
-		role: "user",
-	});
+    const [signup, setSignup] = useState({
+        firstName: '',
+        lastName: '',
+        dob: '',
+        gender: '',
+        phone: '',
+        email: '',
+        address1: '',
+        address2: '',
+        city: '',
+        pin: '',
+        district: '',
+        state: '',
+        country: '',
+        password: '',
+        confirmPassword: '',
+        isVerified: true,
+        role: 'user'
+    });
 
-	const navigate = useNavigate();
-	const handleSignUp = async (e: React.FormEvent) => {
-		e.preventDefault();
-		console.log(signup);
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('http://localhost:3000/api/v1/user/signup/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(signup)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to sign up: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Sign up successful:', data);
+        } catch (error) {
+            console.error('Error during sign up:', error);
+        }
+    };
 
 		const {
 			firstName,
