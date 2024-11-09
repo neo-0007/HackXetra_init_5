@@ -13,8 +13,10 @@ class UserModel {
   final String country;
   final String password;
   final String confirmPassword;
+  final String dob;
 
   UserModel({
+    required this.dob,
     required this.firstName,
     required this.lastName,
     required this.gender,
@@ -47,23 +49,26 @@ class UserModel {
       country: json['country'],
       password: json['password'],
       confirmPassword: json['confirmPassword'],
+      dob: json['dob'],
     );
   }
-Map<String, dynamic> toJson() {
-  return {
-    'firstName': firstName,
-    'lastName': lastName,
-    'gender': gender,
-    'phone': phone,
-    'email': email,
-    'address1': address1,
-    'address2': address2,
-    'city': city,
-    'pin': pin,
-    'district': district,
-    'state': state,
-    'country': country,
-    'password': password,
-    'confirmPassword': confirmPassword,
-  };
-}}
+  Map<String, dynamic> toJson() {
+    return {
+      'firstName': firstName,
+      'lastName': lastName,
+      'gender': gender,
+      'phone': phone,
+      'email': email,
+      'address1': address1,
+      'address2': address2,
+      'city': city,
+      'pin': pin,
+      'district': district,
+      'state': state,
+      'country': country,
+      'password': password,
+      'confirmPassword': confirmPassword,
+      'dob': dob,
+    };
+  }
+}

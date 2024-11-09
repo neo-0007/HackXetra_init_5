@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/features/auth/models/user_model.dart';
+import 'package:frontend_mobile/features/auth/services/auth_services.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_big_text.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_button.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_form_field.dart';
@@ -30,6 +32,58 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+
+  AuthServices authServices = AuthServices();
+
+  Future<void> userSignup() async {
+    String firstName = firstNameController.text;
+    String lastName = lastNameController.text;
+    String dob = dobController.text;
+    String gender = genderController.text;
+    String phone = phoneController.text;
+    String address1 = address1Controller.text;
+    String address2 = address2Controller.text;
+    String city = cityController.text;
+    String district = districtController.text;
+    String state = stateController.text;
+    String country = countryController.text;
+    String zip = zipController.text;
+    String password = passwordController.text;
+    String confirmPassword = confirmPasswordController.text;
+    String email = emailController.text;
+
+    UserModel user = UserModel(
+      firstName: firstName,
+      lastName: lastName,
+      dob: dob,
+      gender: gender,
+      phone: phone,
+      email: email,
+      address1: address1,
+      address2: address2,
+      city: city,
+      district: district,
+      state: state,
+      country: country,
+      pin: zip,
+      password: password,
+      confirmPassword: confirmPassword,
+    );
+
+    final result = await authServices.signup(user);
+
+    if (result == 'Success') {
+      if (!mounted) return;
+      context.goNamed(RouteConstants.rootHomePage);
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +141,9 @@ class _SignupPageState extends State<SignupPage> {
                       width: 20,
                     ),
                     Expanded(
-                        child: AuthFormField(
-                            controller: genderController, hintText: 'Gender'))
+                      child: AuthFormField(
+                          controller: genderController, hintText: 'Gender'),
+                    )
                   ],
                 ),
                 Row(
@@ -173,9 +228,9 @@ class _SignupPageState extends State<SignupPage> {
                   ],
                 ),
                 AuthFormField(
-                    controller: countryController,
-                    hintText: 'Country',
-                    ),
+                  controller: countryController,
+                  hintText: 'Country',
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -204,7 +259,9 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(
                   height: 30,
                 ),
-                AuthButton(buttonText: 'Signup', onPressed: () {}),
+                AuthButton(buttonText: 'Signup', onPressed: () {
+                  userSignup();
+                }),
                 const SizedBox(
                   height: 20,
                 ),
@@ -268,7 +325,7 @@ class _SignupPageState extends State<SignupPage> {
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
                     ),
                     InkWell(
-                      onTap:()=>context.goNamed(RouteConstants.login),
+                      onTap: () => context.goNamed(RouteConstants.login),
                       child: const Text(
                         'Signin',
                         style: TextStyle(
