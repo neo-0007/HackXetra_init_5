@@ -21,60 +21,124 @@ import UserDashboard from "./pages/users/Dashboard";
 import DoctorDashboard from "./pages/doctors/Dashboard";
 import HealthcareDashboard from "./pages/healthcare/Dashboard";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
-  const [user, setUser] = useState({
-    id: 1,
-    name: "Dhrit",
-    role: "healthcare", // Change to "doctor" or "healthcare" as needed
-    email: "dhrit@example.com"
-  });
+	const [user, setUser] = useState({
+		id: 1,
+		name: "Dhrit",
+		role: "healthcare", // Change to "doctor" or "healthcare" as needed
+		email: "dhrit@example.com",
+	});
 
-  const isAuthenticated = !!user;
-  
-  const getDashboard = () => {
-    if (user?.role === "doctor") return <DoctorDashboard />;
-    if (user?.role === "healthcare") return <HealthcareDashboard />;
-    return <UserDashboard />;
-  };
+	const isAuthenticated = !!user;
 
-  return (
-    <Router>
-      <Navbar isAuthenticated={isAuthenticated} userName={user.name} />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={isAuthenticated ? getDashboard() : <FrontPage />} />
-        <Route path="/user/login" element={<UserLogin />} />
-        <Route path="/user/signup" element={<UserSignup />} />
-        
-        {/* Protected Routes for Users */}
-        <Route element={<UserProtectedRoutes isAuthenticated={isAuthenticated && user.role === "user"} />}>
-          <Route path="/user/prescription/upload" element={<UploadPresc />} />
-          <Route path="/user/prescription/history" element={<UserPrescriptionHistory />} />
-          <Route path="/user/prescription" element={<DigitalPrescription />} />
-          <Route path="/user/testresults/upload" element={<UploadTestRes />} />
-          <Route path="/user/testresults/history" element={<UserTestResults />} />
-          <Route path="/user/testresults" element={<DigitalTestReport />} />
-        </Route>
+	const getDashboard = () => {
+		if (user?.role === "doctor") return <DoctorDashboard />;
+		if (user?.role === "healthcare") return <HealthcareDashboard />;
+		return <UserDashboard />;
+	};
 
-        {/* Doctor Routes */}
-        <Route path="/doctor/login" element={<DoctorLogin />} />
-        <Route path="/doctor/signup" element={<DoctorSignup />} />
-        <Route element={<UserProtectedRoutes isAuthenticated={isAuthenticated && user.role === "doctor"} />}>
-          <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-          <Route path="/doctor/users" element={<FindUserByPhoneAndOTP />} />
-          <Route path="/doctor/user/otp" element={<OTPVerification />} />
-        </Route>
+	return (
+		<Router>
+			<Navbar isAuthenticated={isAuthenticated} userName={user.name} />
+			<Routes>
+				{/* Public Routes */}
+				<Route
+					path="/"
+					element={isAuthenticated ? getDashboard() : <FrontPage />}
+				/>
+				<Route path="/user/login" element={<UserLogin />} />
+				<Route path="/user/signup" element={<UserSignup />} />
 
-        {/* Healthcare Routes */}
-        <Route path="/healthcare/login" element={<HealthcareLogin />} />
-        <Route path="/healthcare/signup" element={<HealthcareSignup />} />
-        <Route element={<UserProtectedRoutes isAuthenticated={isAuthenticated && user.role === "healthcare"} />}>
-          <Route path="/healthcare/dashboard" element={<HealthcareDashboard />} />
-          {/* Add additional healthcare routes here */}
-        </Route>
-      </Routes>
-    </Router>
-  );
+				{/* Protected Routes for Users */}
+				<Route
+					element={
+						<UserProtectedRoutes
+							isAuthenticated={
+								isAuthenticated && user.role === "user"
+							}
+						/>
+					}
+				>
+					<Route
+						path="/user/prescription/upload"
+						element={<UploadPresc />}
+					/>
+					<Route
+						path="/user/prescription/history"
+						element={<UserPrescriptionHistory />}
+					/>
+					<Route
+						path="/user/prescription"
+						element={<DigitalPrescription />}
+					/>
+					<Route
+						path="/user/testresults/upload"
+						element={<UploadTestRes />}
+					/>
+					<Route
+						path="/user/testresults/history"
+						element={<UserTestResults />}
+					/>
+					<Route
+						path="/user/testresults"
+						element={<DigitalTestReport />}
+					/>
+				</Route>
+
+				{/* Doctor Routes */}
+				<Route path="/doctor/login" element={<DoctorLogin />} />
+				<Route path="/doctor/signup" element={<DoctorSignup />} />
+				<Route
+					element={
+						<UserProtectedRoutes
+							isAuthenticated={
+								isAuthenticated && user.role === "doctor"
+							}
+						/>
+					}
+				>
+					<Route
+						path="/doctor/dashboard"
+						element={<DoctorDashboard />}
+					/>
+					<Route
+						path="/doctor/users"
+						element={<FindUserByPhoneAndOTP />}
+					/>
+					<Route
+						path="/doctor/user/otp"
+						element={<OTPVerification />}
+					/>
+				</Route>
+
+				{/* Healthcare Routes */}
+				<Route path="/healthcare/login" element={<HealthcareLogin />} />
+				<Route
+					path="/healthcare/signup"
+					element={<HealthcareSignup />}
+				/>
+				<Route
+					element={
+						<UserProtectedRoutes
+							isAuthenticated={
+								isAuthenticated && user.role === "healthcare"
+							}
+						/>
+					}
+				>
+					<Route
+						path="/healthcare/dashboard"
+						element={<HealthcareDashboard />}
+					/>
+					{/* Add additional healthcare routes here */}
+				</Route>
+			</Routes>
+			<ToastContainer />
+		</Router>
+	);
 }
 
 export default App;
