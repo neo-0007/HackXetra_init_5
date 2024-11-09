@@ -8,11 +8,17 @@ import {
 import {
 	uploadPrescription,
 	uploadLabReport,
+	userSignUp,
+	userLogIn,
+	decodeToken,
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
 // Define the image upload route
+router.post("/signup", userSignUp);
+router.post("/login", userLogIn);
+router.post("/verify", decodeToken);
 router.post(
 	"/upload-prescription",
 	prescriptionUpload.single("image"),

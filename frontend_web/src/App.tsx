@@ -28,11 +28,12 @@ function App() {
 	const [user, setUser] = useState({
 		id: 1,
 		name: "Dhrit",
-		role: "healthcare", // Change to "doctor" or "healthcare" as needed
+		role: "user", // Change to "doctor" or "healthcare" as needed
 		email: "dhrit@example.com",
 	});
 
-	const isAuthenticated = !!user;
+	// const isAuthenticated = !!user;
+	const isAuthenticated = false;
 
 	const getDashboard = () => {
 		if (user?.role === "doctor") return <DoctorDashboard />;
