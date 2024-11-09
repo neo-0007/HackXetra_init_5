@@ -1,8 +1,12 @@
 import express from "express";
-import { upload } from "../middleware/multer.middleware.js";
+import {
+	prescriptionUpload,
+	labReportUpload,
+} from "../middleware/multer.middleware.js";
 // import path from "path";
 
-import { uploadPrescription, userSignUp,userLogIn, decodeToken } from "../controllers/user.controller.js";
+import { uploadPrescription, userSignUp,userLogIn, decodeToken, uploadLabReport } from "../controllers/user.controller.js";
+
 
 const router = express.Router();
 
@@ -10,6 +14,15 @@ const router = express.Router();
 router.post("/signup", userSignUp);
 router.post("/login", userLogIn);
 router.post("/verify", decodeToken)
-router.post("/upload", upload.single("image"), uploadPrescription);
+router.post(
+	"/upload-prescription",
+	prescriptionUpload.single("image"),
+	uploadPrescription
+);
+router.post(
+	"/upload-lab-report",
+	labReportUpload.single("image"),
+	uploadLabReport
+);
 
 export default router;
