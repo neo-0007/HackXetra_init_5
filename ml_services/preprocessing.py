@@ -34,3 +34,4 @@ async def process_prescription(file: UploadFile = File(...)):
     
 #run using the following command in terminal
 # uvicorn preprocessing:app --port 8000
+# endpoint: http://localhost:8000/preprocessing
