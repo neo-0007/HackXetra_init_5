@@ -8,10 +8,27 @@ const LoginForm: React.FC = () => {
     password: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(logindata);
-    // Handle login logic here
+
+    try {
+      const response = await fetch('http://localhost:3000/api/v1/user/login/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(logindata)
+      });
+
+      if (!response.ok) {
+          throw new Error(`Failed to sign up: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Login successful:', data);
+  } catch (error) {
+      console.error('Error during sign up:', error);
+  }
   };
 
   return (

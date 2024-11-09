@@ -64,10 +64,28 @@ const HealthcareSignupForm: React.FC = () => {
     };
 
     // Handle form submit
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log(healthcareSignup);
         // You can submit the form data here
+        try {
+            const response = await fetch('http://localhost:3000/api/v1/user/signup/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(healthcareSignup)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to sign up: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Sign up successful:', data);
+        } catch (error) {
+            console.error('Error during sign up:', error);
+        }
     };
 
     return (
