@@ -1,8 +1,6 @@
 import React, { useState } from "react";
+import { useAppContext } from "../../App";
 import { toast } from "react-toastify";
-import { auth, db } from "../../configs/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const SignupForm: React.FC = () => {
@@ -26,6 +24,10 @@ const SignupForm: React.FC = () => {
 		role: "user",
 	});
 
+	const navigate = useNavigate();
+
+	const { setUser, setIsAuthenticated } = useAppContext();
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
@@ -48,6 +50,45 @@ const SignupForm: React.FC = () => {
 			console.log("Sign up successful:", data);
 		} catch (error) {
 			console.error("Error during sign up:", error);
+		} finally {
+			try {
+				const response = await fetch(
+					"http://localhost:3000/api/v1/user/login/",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							email: signup.email,
+							password: signup.password,
+						}),
+					}
+				);
+
+				if (!response.ok) {
+					throw new Error(
+						`Failed to sign up: ${response.statusText}`
+					);
+				}
+
+				const data = await response.json();
+				console.log("Sign up successful:", data);
+
+				localStorage.setItem("token", data.token);
+
+				const user = {
+					id: data.user._id,
+					email: data.user.email,
+					role: data.user.role,
+				};
+
+				setUser(user);
+				setIsAuthenticated(true);
+
+				toast.success("Sign up successful!");
+				setTimeout(() => navigate("/"), 2000);
+			} catch (error) {}
 		}
 	};
 

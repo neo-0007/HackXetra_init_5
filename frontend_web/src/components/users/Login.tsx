@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { auth } from "../../configs/firebase.js";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useAppContext } from "../../App";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm: React.FC = () => {
+	const { setUser, setIsAuthenticated } = useAppContext();
 	const [loginMethod, setLoginMethod] = useState("email"); // Default is email
 	const [loginData, setLoginData] = useState({
 		email: "",
@@ -10,23 +12,39 @@ const LoginForm: React.FC = () => {
 		password: "",
 	});
 
-	const handleLogin = async (e: React.FormEvent) => {
+	const navigate = useNavigate();
+
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log(loginData);
-		// Handle login logic here
-		const { email, password } = loginData;
+
 		try {
-			const userCredential = await signInWithEmailAndPassword(
-				auth,
-				email,
-				password
+			const response = await fetch(
+				"http://localhost:3000/api/v1/user/login/",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(loginData),
+				}
 			);
-			const userEmail = userCredential.user.email;
-			console.log("Logged in user email:", userEmail);
-			// ...rest of your code
-			console.log("Current User", auth.currentUser);
+
+			if (!response.ok) {
+				throw new Error(`Failed to sign up: ${response.statusText}`);
+			}
+
+			const data = await response.json();
+			console.log("Login successful:", data);
+
+			localStorage.setItem("token", data.token);
+
+			setUser(data.user);
+			setIsAuthenticated(true);
+			toast.success("Login successful!");
+
+			setTimeout(() => navigate("/"), 2000);
 		} catch (error) {
-			console.error("Login error:", error);
+			console.error("Error during sign up:", error);
 		}
 	};
 
@@ -55,7 +73,7 @@ const LoginForm: React.FC = () => {
 					Log in with Phone
 				</button>
 			</div>
-			<form className="space-y-4" onSubmit={(e) => handleLogin(e)}>
+			<form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
 				<div>
 					<label className="block text-sm font-medium">
 						{loginMethod === "email"
