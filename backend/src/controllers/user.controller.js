@@ -2,9 +2,11 @@ import fs, { promises as fsPromises } from "fs";
 // import path from "path";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SchemaType } from "@google/generative-ai";
+import FormData from "form-data";
+import axios from "axios";
 
-// Define the structuredPrescritionOutput function
-const structuredPrescritionOutput = async (file) => {
+// Define the structuredPrescriptionOutput function
+const structuredPrescriptionOutput = async (filePath, mimeType) => {
 	const genAI = new GoogleGenerativeAI(
 		"AIzaSyD6SwZ0GQ-zeZ1r9Rvnp8hDcbwMGoxpm7I"
 	); // Replace with your actual API key
@@ -57,6 +59,11 @@ const structuredPrescritionOutput = async (file) => {
 					required: ["name", "dosage", "frequency", "timing"],
 				},
 			},
+			medicalCondition: {
+				type: SchemaType.STRING,
+				description: "Medical condition of the patient",
+				nullable: true,
+			},
 		},
 		required: ["doctor", "prescription"],
 	};
@@ -71,7 +78,7 @@ const structuredPrescritionOutput = async (file) => {
 
 	const prompt =
 		"This a prescription written by a doctor. Detect what is written in this prescription and respond with all information written in a json format. Guess the name of the medicine only if it is not among the known medicines or brands.";
-	const images = [generateImageParts(file)];
+	const images = [generateImageParts(filePath, mimeType)];
 	console.log(images);
 
 	try {
@@ -83,7 +90,7 @@ const structuredPrescritionOutput = async (file) => {
 	}
 };
 
-const structuredLabReportOutput = async (file) => {
+const structuredLabReportOutput = async (filePath, mimeType) => {
 	const genAI = new GoogleGenerativeAI(
 		"AIzaSyD6SwZ0GQ-zeZ1r9Rvnp8hDcbwMGoxpm7I"
 	); // Replace with your actual API key
@@ -264,7 +271,7 @@ const structuredLabReportOutput = async (file) => {
 
 	const prompt =
 		"This a lab report written by a doctor. Detect what is written in this lab report and respond with all information written in a json format.";
-	const images = [generateImageParts(file)];
+	const images = [generateImageParts(filePath, mimeType)];
 	console.log(images);
 
 	try {
@@ -286,12 +293,12 @@ const structuredLabReportOutput = async (file) => {
 };
 
 // Define image processing helper function
-const generateImageParts = (file) => {
-	const fileData = fs.readFileSync(file.path);
+const generateImageParts = (filePath, mimeType) => {
+	const fileData = fs.readFileSync(filePath);
 	return {
 		inlineData: {
 			data: fileData.toString("base64"),
-			mimeType: file.mimetype,
+			mimeType: mimeType,
 		},
 	}; // Adjust mimeType if necessary
 };
@@ -299,11 +306,51 @@ const generateImageParts = (file) => {
 export const uploadPrescription = async (req, res) => {
 	try {
 		const file = req.file;
-		console.log(req?.file);
-		const jsonResponse = await structuredPrescritionOutput(file);
-		// fs.unlinkSync(filePath); // Clean up the uploaded file after processing
-		res.json(jsonResponse);
-		// res.json({ msg: "File uploaded successfully" });
+		// console.log(req?.file);
+		if (!file) {
+			return res.status(400).json({ error: "No file uploaded" });
+		}
+
+		// Create form data to send to the /preprocessing endpoint
+		const formData = new FormData();
+		formData.append("file", fs.createReadStream(file.path));
+
+		// Send the file to the /preprocessing endpoint
+		const response = await axios.post(
+			"http://localhost:8000/preprocessing",
+			formData,
+			{
+				headers: formData.getHeaders(),
+				responseType: "stream", // Expect a stream back
+			}
+		);
+		// console.log("response", response?.data);
+
+		// Save the enhanced image received from /preprocessing
+		const enhancedImagePath = `./public/enhanced-prescriptions/${Date.now()}-${
+			file.originalname
+		}`;
+		console.log(enhancedImagePath);
+		const writer = fs.createWriteStream(enhancedImagePath);
+		response.data.pipe(writer);
+
+		writer.on("finish", async () => {
+			// Perform data extraction on the enhanced image
+			const jsonResponse = await structuredPrescriptionOutput(
+				enhancedImagePath,
+				file.mimetype
+			);
+
+			// Optionally clean up the uploaded files after processing
+			fs.unlinkSync(file.path); // Clean up the original file
+			fs.unlinkSync(enhancedImagePath); // Clean up the enhanced file if no longer needed
+
+			res.json(jsonResponse);
+		});
+
+		writer.on("error", (error) => {
+			res.status(500).json({ error: "Failed to save enhanced image" });
+		});
 	} catch (error) {
 		res.status(500).json({ error: "Failed to process image" });
 	}
@@ -312,11 +359,51 @@ export const uploadPrescription = async (req, res) => {
 export const uploadLabReport = async (req, res) => {
 	try {
 		const file = req.file;
-		console.log(req?.file);
-		const jsonResponse = await structuredLabReportOutput(file);
-		// fs.unlinkSync(filePath); // Clean up the uploaded file after processing
-		res.json(jsonResponse);
-		// res.json({ msg: "File uploaded successfully" });
+		// console.log(req?.file);
+		if (!file) {
+			return res.status(400).json({ error: "No file uploaded" });
+		}
+
+		// Create form data to send to the /preprocessing endpoint
+		const formData = new FormData();
+		formData.append("file", fs.createReadStream(file.path));
+
+		// Send the file to the /preprocessing endpoint
+		const response = await axios.post(
+			"http://localhost:8000/preprocessing",
+			formData,
+			{
+				headers: formData.getHeaders(),
+				responseType: "stream", // Expect a stream back
+			}
+		);
+		// console.log("response", response?.data);
+
+		// Save the enhanced image received from /preprocessing
+		const enhancedImagePath = `./public/enhanced-lab-reports/${Date.now()}-${
+			file.originalname
+		}`;
+		console.log(enhancedImagePath);
+		const writer = fs.createWriteStream(enhancedImagePath);
+		response.data.pipe(writer);
+
+		writer.on("finish", async () => {
+			// Perform data extraction on the enhanced image
+			const jsonResponse = await structuredLabReportOutput(
+				enhancedImagePath,
+				file.mimetype
+			);
+
+			// Optionally clean up the uploaded files after processing
+			// fs.unlinkSync(file.path); // Clean up the original file
+			// fs.unlinkSync(enhancedImagePath); // Clean up the enhanced file if no longer needed
+
+			res.json(jsonResponse);
+		});
+
+		writer.on("error", (error) => {
+			res.status(500).json({ error: "Failed to save enhanced image" });
+		});
 	} catch (error) {
 		res.status(500).json({ error: "Failed to process image" });
 	}
