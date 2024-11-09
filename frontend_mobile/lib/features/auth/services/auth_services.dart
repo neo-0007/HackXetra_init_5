@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:frontend_mobile/configs/api_constants.dart';
 import 'package:frontend_mobile/features/auth/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
 class AuthServices {
   Future<String> signup(UserModel user) async {
     final res = await http.post(
-      Uri.parse('url/signup'),
+      Uri.parse(ApiConstants.signup),
       body: user.toJson(),
     );
 
@@ -18,7 +19,7 @@ class AuthServices {
 
   Future<String> login(String email, String password) async {
     final res = await http.post(
-      Uri.parse('url/login'),
+      Uri.parse(ApiConstants.login),
       body: jsonEncode({
         email: email,
         password: password,
