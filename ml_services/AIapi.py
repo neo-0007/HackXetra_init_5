@@ -53,7 +53,7 @@ def preprocess_image(image: PIL.Image.Image, contrast_factor: float = 1.0) -> PI
 
 
 
-gemini_api_key = 'AIzaSyDS3ydB7g2GcCnZ160O-4XRj5V3p5x3voI' 
+gemini_api_key = '' 
 genai.configure(api_key=gemini_api_key)
 
 
