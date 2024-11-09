@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SchemaType } from "@google/generative-ai";
 import User from "../models/users.js";
 import bcrypt from "bcryptjs";
-import { generateAccessToken } from "../utills/jwt.js";
+import { generateAccessToken, verifyToken } from "../utills/jwt.js";
 
 // Define the structuredOutputWithSchemaAndImage function
 const structuredOutputWithSchemaAndImage = async (file) => {
@@ -144,3 +144,16 @@ export const userLogIn = async (req, res) => {
 	}
 }
 
+export const decodeToken = async (req, res) => {
+	try {
+		const token = req.headers.authorization.split(' ')[1];
+		const decoded = verifyToken(token);
+		const user = await User.findById(decoded.id);
+		if (!user) {
+			return res.status(404).json({ message: 'User not found' });
+		}
+		res.json({ message: 'Token decoded successfully', user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+	} catch (error) {
+		res.status(500).json({ message: 'Error decoding token', error });
+	}
+}
