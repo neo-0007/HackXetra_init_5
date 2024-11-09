@@ -3,6 +3,8 @@ import fs, { promises as fsPromises } from "fs";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SchemaType } from "@google/generative-ai";
 import User from "../models/users.js";
+import bcrypt from "bcryptjs";
+import { generateAccessToken } from "../utills/jwt.js";
 
 // Define the structuredOutputWithSchemaAndImage function
 const structuredOutputWithSchemaAndImage = async (file) => {
@@ -117,5 +119,28 @@ export const userSignUp = async (req, res) => {
 	}
 };
 
+export const userLogIn = async (req, res) => {
+	try {
+		const { email, password } = req.body;
 
+		// Check if the user exists
+		const user = await User.findOne({ email });
+		if (!user) {
+			return res.status(404).json({ message: 'User not found' });
+		}
+
+		// Compare the provided password with the hashed password
+		const isPasswordValid = await bcrypt.compare(password, user.password);
+		const token = generateAccessToken(user._id);
+		if (!isPasswordValid) {
+			return res.status(401).json({ message: 'Invalid email or password' });
+		}
+
+		// If authentication is successful, you can proceed to create a session or JWT token
+		// Here we are just returning a success message
+		res.status(200).json({ message: 'Login successful', token, user: { id: user._id, email: user.email, role: user.role } });
+	} catch (error) {
+		res.status(500).json({ message: 'Error logging in', error });
+	}
+}
 
