@@ -7,9 +7,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthServices {
   Future<String> signup(UserModel user) async {
     final res = await http.post(
-      Uri.parse(ApiConstants.signup),
-      body: user.toJson(),
-    );
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        Uri.parse(ApiConstants.signup),
+        body: jsonEncode(
+          user.toJson(),
+        ));
 
     if (res.statusCode == 201) {
       return 'Success';
@@ -21,12 +25,17 @@ class AuthServices {
   Future<String> login(String email, String password) async {
     final res = await http.post(
       Uri.parse(ApiConstants.login),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode({
-        email: email,
-        password: password,
+        "email":email,
+        "password":password,
       }),
     );
     if (res.statusCode == 200) {
+      final token = jsonDecode(res.body)['token'];
+      await storeToken(token);
       return 'Success';
     } else {
       return res.body.toString();
@@ -39,12 +48,12 @@ class AuthServices {
   }
 
   Future<String?> getToken() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('token');
-}
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
 
-Future<void> clearToken() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.remove('token');
-}
+  Future<void> clearToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+  }
 }

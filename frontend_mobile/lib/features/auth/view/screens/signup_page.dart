@@ -74,7 +74,7 @@ class _SignupPageState extends State<SignupPage> {
 
     if (result == 'Success') {
       if (!mounted) return;
-      context.goNamed(RouteConstants.rootHomePage);
+      context.goNamed(RouteConstants.login);
     } else {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
