@@ -2,7 +2,16 @@ import React, { useState } from 'react';
 
 const DoctorLoginForm: React.FC = () => {
     const [loginMethod, setLoginMethod] = useState('email'); // Default is email
-
+    const [logindata, setLogindata] = useState({
+        email: '',
+        phone: '',
+        password: '',
+    });
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log(logindata);
+        // Handle login logic here
+    }
     return (
         <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg">
             <h2 className="text-2xl font-bold text-center">Log In {"(Doctor)"}</h2>
@@ -24,7 +33,7 @@ const DoctorLoginForm: React.FC = () => {
                     Log in with Phone
                 </button>
             </div>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                     <label className="block text-sm font-medium">
                         {loginMethod === 'email' ? 'Your Email' : 'Your Phone Number'}
@@ -32,12 +41,16 @@ const DoctorLoginForm: React.FC = () => {
                     {loginMethod === 'email' ? (
                         <input
                             type="email"
+                            onChange={(e) => setLogindata({ ...logindata, email: e.target.value })}
+                            value={logindata.email}
                             placeholder="johndoe@gmail.com"
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     ) : (
                         <input
                             type="tel"
+                            onChange={(e) => setLogindata({ ...logindata, phone: e.target.value })}
+                            value={logindata.phone}
                             placeholder="Enter your phone number"
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
@@ -47,6 +60,8 @@ const DoctorLoginForm: React.FC = () => {
                     <label className="block text-sm font-medium">Password</label>
                     <input
                         type="password"
+                        onChange={(e) => setLogindata({ ...logindata, password: e.target.value })}
+                        value={logindata.password}
                         placeholder="Password"
                         className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
