@@ -435,12 +435,12 @@ export const userLogIn = async (req, res) => {
 
 		// Compare the provided password with the hashed password
 		const isPasswordValid = await bcrypt.compare(password, user.password);
-		const token = generateAccessToken(user._id);
 		if (!isPasswordValid) {
 			return res
 				.status(401)
 				.json({ message: "Invalid email or password" });
 		}
+		const token = generateAccessToken(user._id);
 
 		// If authentication is successful, you can proceed to create a session or JWT token
 		// Here we are just returning a success message
