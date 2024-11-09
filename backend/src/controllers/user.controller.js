@@ -4,10 +4,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SchemaType } from "@google/generative-ai";
 import User from "../models/users.js";
 import bcrypt from "bcryptjs";
-import { generateAccessToken } from "../utills/jwt.js";
+import { generateAccessToken, verifyToken } from "../utills/jwt.js";
+import FormData from "form-data";
+import axios from "axios";
+import { Prescription } from "../models/prescription.js";
 
-// Define the structuredOutputWithSchemaAndImage function
-const structuredOutputWithSchemaAndImage = async (file) => {
+// Define the structuredPrescriptionOutput function
+const structuredPrescriptionOutput = async (filePath, mimeType) => {
 	const genAI = new GoogleGenerativeAI(
 		"AIzaSyD6SwZ0GQ-zeZ1r9Rvnp8hDcbwMGoxpm7I"
 	); // Replace with your actual API key
@@ -60,6 +63,11 @@ const structuredOutputWithSchemaAndImage = async (file) => {
 					required: ["name", "dosage", "frequency", "timing"],
 				},
 			},
+			medicalCondition: {
+				type: SchemaType.STRING,
+				description: "Medical condition of the patient",
+				nullable: true,
+			},
 		},
 		required: ["doctor", "prescription"],
 	};
@@ -74,7 +82,7 @@ const structuredOutputWithSchemaAndImage = async (file) => {
 
 	const prompt =
 		"This a prescription written by a doctor. Detect what is written in this prescription and respond with all information written in a json format. Guess the name of the medicine only if it is not among the known medicines or brands.";
-	const images = [generateImageParts(file)];
+	const images = [generateImageParts(filePath, mimeType)];
 	console.log(images);
 
 	try {
@@ -86,13 +94,215 @@ const structuredOutputWithSchemaAndImage = async (file) => {
 	}
 };
 
+const structuredLabReportOutput = async (filePath, mimeType) => {
+	const genAI = new GoogleGenerativeAI(
+		"AIzaSyD6SwZ0GQ-zeZ1r9Rvnp8hDcbwMGoxpm7I"
+	); // Replace with your actual API key
+
+	const schema = {
+		type: SchemaType.OBJECT,
+		properties: {
+			institution: {
+				type: SchemaType.STRING,
+				description: "Name of the medical institution",
+				nullable: false,
+			},
+			location: {
+				type: SchemaType.STRING,
+				description: "Location of the medical institution",
+				nullable: false,
+			},
+			patient_info: {
+				type: SchemaType.OBJECT,
+				properties: {
+					UHD: {
+						type: SchemaType.STRING,
+						description:
+							"Unique hospital identifier for the patient",
+						nullable: false,
+					},
+					name: {
+						type: SchemaType.STRING,
+						description: "Name of the patient",
+						nullable: false,
+					},
+					sex: {
+						type: SchemaType.STRING,
+						description: "Sex of the patient",
+						nullable: false,
+					},
+					age: {
+						type: SchemaType.STRING,
+						description: "Age of the patient",
+						nullable: false,
+					},
+					department: {
+						type: SchemaType.STRING,
+						description: "Department the patient is in",
+						nullable: false,
+					},
+					referred_by: {
+						type: SchemaType.STRING,
+						description: "Referring doctor's name",
+						nullable: false,
+					},
+					unit_name: {
+						type: SchemaType.STRING,
+						description: "Unit or ward name",
+						nullable: true,
+					},
+					lab_reference_number: {
+						type: SchemaType.STRING,
+						description: "Lab reference number for the report",
+						nullable: false,
+					},
+					ward_name: {
+						type: SchemaType.STRING,
+						description: "Name of the patient's ward",
+						nullable: true,
+					},
+					registration_date: {
+						type: SchemaType.STRING,
+						description: "Date and time of patient's registration",
+						nullable: false,
+					},
+				},
+				required: [
+					"UHD",
+					"name",
+					"sex",
+					"age",
+					"department",
+					"referred_by",
+					"lab_reference_number",
+					"registration_date",
+				],
+			},
+			sample_details: {
+				type: SchemaType.OBJECT,
+				properties: {
+					sample_date: {
+						type: SchemaType.STRING,
+						description: "Date and time of sample collection",
+						nullable: false,
+					},
+					lab_sub_code: {
+						type: SchemaType.STRING,
+						description: "Sub-code indicating type of lab analysis",
+						nullable: false,
+					},
+					lab_unit: {
+						type: SchemaType.STRING,
+						description: "Specific lab unit performing the tests",
+						nullable: false,
+					},
+					report_generated_date: {
+						type: SchemaType.STRING,
+						description: "Date and time when report was generated",
+						nullable: false,
+					},
+					sample_id: {
+						type: SchemaType.STRING,
+						description: "Unique sample ID",
+						nullable: false,
+					},
+					sample_type: {
+						type: SchemaType.STRING,
+						description: "Type of sample (e.g., blood, urine)",
+						nullable: false,
+					},
+				},
+				required: [
+					"sample_date",
+					"lab_sub_code",
+					"lab_unit",
+					"report_generated_date",
+					"sample_id",
+					"sample_type",
+				],
+			},
+			test_results: {
+				type: SchemaType.ARRAY,
+				items: {
+					type: SchemaType.OBJECT,
+					properties: {
+						test_name: {
+							type: SchemaType.STRING,
+							description: "Name of the test conducted",
+							nullable: false,
+						},
+						observation_result: {
+							type: SchemaType.STRING,
+							description: "Result or value of the observation",
+							nullable: false,
+						},
+						normal_range: {
+							type: SchemaType.STRING,
+							description: "Normal range for the test results",
+							nullable: false,
+						},
+					},
+					required: [
+						"test_name",
+						"observation_result",
+						"normal_range",
+					],
+				},
+			},
+			authorized_signatory: {
+				type: SchemaType.STRING,
+				description: "Name or title of the authorized signatory",
+				nullable: false,
+			},
+		},
+		required: [
+			"institution",
+			"location",
+			"patient_info",
+			"sample_details",
+			"test_results",
+			"authorized_signatory",
+		],
+	};
+
+	const model = genAI.getGenerativeModel({
+		model: "gemini-1.5-pro",
+		generationConfig: {
+			responseMimeType: "application/json",
+			responseSchema: schema,
+		},
+	});
+
+	const prompt =
+		"This a lab report written by a doctor. Detect what is written in this lab report and respond with all information written in a json format.";
+	const images = [generateImageParts(filePath, mimeType)];
+	console.log(images);
+
+	try {
+		const result = await model.generateContent([prompt, ...images]);
+		return JSON.parse(result.response.text());
+	} catch (error) {
+		console.log(error);
+		return error;
+	}
+	// } finally {
+	// 	try {
+	// 		await fsPromises.unlink(file.path);
+	// 	} catch (error) {
+	// 		console.log(error);
+
+	// 		return error;
+	// 	}
+	// }
+};
+
 // Define image processing helper function
-const generateImageParts = (file) => {
-	const fileData = fs.readFileSync(file.path);
+const generateImageParts = (filePath, mimeType) => {
+	const fileData = fs.readFileSync(filePath);
 	return {
 		inlineData: {
 			data: fileData.toString("base64"),
-			mimeType: file.mimetype,
+			mimeType: mimeType,
 		},
 	}; // Adjust mimeType if necessary
 };
@@ -100,11 +310,104 @@ const generateImageParts = (file) => {
 export const uploadPrescription = async (req, res) => {
 	try {
 		const file = req.file;
-		console.log(req?.file);
-		const jsonResponse = await structuredOutputWithSchemaAndImage(file);
-		// fs.unlinkSync(filePath); // Clean up the uploaded file after processing
-		res.json(jsonResponse);
-		// res.json({ msg: "File uploaded successfully" });
+		// console.log(req?.file);
+		if (!file) {
+			return res.status(400).json({ error: "No file uploaded" });
+		}
+
+		// Create form data to send to the /preprocessing endpoint
+		const formData = new FormData();
+		formData.append("file", fs.createReadStream(file.path));
+
+		// Send the file to the /preprocessing endpoint
+		const response = await axios.post(
+			"http://localhost:8000/preprocessing",
+			formData,
+			{
+				headers: formData.getHeaders(),
+				responseType: "stream", // Expect a stream back
+			}
+		);
+		// console.log("response", response?.data);
+
+		// Save the enhanced image received from /preprocessing
+		const enhancedImagePath = `./public/enhanced-prescriptions/${Date.now()}-${
+			file.originalname
+		}`;
+		console.log(enhancedImagePath);
+		const writer = fs.createWriteStream(enhancedImagePath);
+		response.data.pipe(writer);
+
+		writer.on("finish", async () => {
+			// Perform data extraction on the enhanced image
+			const jsonResponse = await structuredPrescriptionOutput(
+				enhancedImagePath,
+				file.mimetype
+			);
+
+			// Optionally clean up the uploaded files after processing
+			// fs.unlinkSync(file.path); // Clean up the original file
+			// fs.unlinkSync(enhancedImagePath); // Clean up the enhanced file if no longer needed
+
+			res.json(jsonResponse);
+		});
+
+		writer.on("error", (error) => {
+			res.status(500).json({ error: "Failed to save enhanced image" });
+		});
+	} catch (error) {
+		res.status(500).json({ error: "Failed to process image" });
+	}
+};
+
+export const uploadLabReport = async (req, res) => {
+	try {
+		const file = req.file;
+		// console.log(req?.file);
+		if (!file) {
+			return res.status(400).json({ error: "No file uploaded" });
+		}
+
+		// Create form data to send to the /preprocessing endpoint
+		const formData = new FormData();
+		formData.append("file", fs.createReadStream(file.path));
+
+		// Send the file to the /preprocessing endpoint
+		const response = await axios.post(
+			"http://localhost:8000/preprocessing",
+			formData,
+			{
+				headers: formData.getHeaders(),
+				responseType: "stream", // Expect a stream back
+			}
+		);
+		// console.log("response", response?.data);
+
+		// Save the enhanced image received from /preprocessing
+		const enhancedImagePath = `./public/enhanced-lab-reports/${Date.now()}-${
+			file.originalname
+		}`;
+		console.log(enhancedImagePath);
+		const writer = fs.createWriteStream(enhancedImagePath);
+		response.data.pipe(writer);
+
+		writer.on("finish", async () => {
+			// Perform data extraction on the enhanced image
+			const jsonResponse = await structuredLabReportOutput(
+				enhancedImagePath,
+				file.mimetype
+			);
+
+			// Optionally clean up the uploaded files after processing
+			// fs.unlinkSync(file.path); // Clean up the original file
+			// fs.unlinkSync(enhancedImagePath); // Clean up the enhanced file if no longer needed
+
+			res.json(jsonResponse);
+		});
+
+		writer.on("error", (error) => {
+			res.status(500).json({ error: "Failed to save enhanced image" });
+		});
 	} catch (error) {
 		res.status(500).json({ error: "Failed to process image" });
 	}
@@ -144,3 +447,57 @@ export const userLogIn = async (req, res) => {
 	}
 }
 
+export const decodeToken = async (req, res) => {
+	try {
+		const token = req.headers.authorization.split(' ')[1];
+		const decoded = verifyToken(token);
+		const user = await User.findById(decoded.id);
+		if (!user) {
+			return res.status(404).json({ message: 'User not found' });
+		}
+		res.json({ message: 'Token decoded successfully', user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+	} catch (error) {
+		res.status(500).json({ message: 'Error decoding token', error });
+	}
+}
+
+// Backend - addPrescription handler function
+export const addPrescription = async (req, res) => {
+    try {
+        const { user_id, doctor, prescription, medicalCondition } = req.body;
+
+        const newPrescription = await Prescription.create({
+            user_id,
+            doctor,
+            prescription,
+            medicalCondition
+        });
+
+        res.status(201).json({ message: 'Prescription added successfully', prescription: newPrescription });
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding prescription', error });
+    }
+};
+
+export const getAllPrescriptionsByID = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const prescriptions = await Prescription.find({ user_id: id });
+		res.json({ message: 'Prescriptions fetched successfully', prescriptions });
+	} catch (error) {
+		res.status(500).json({ message: 'Error fetching prescriptions', error });
+	}
+}
+
+export const getPrescriptionByID = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const prescription = await Prescription.findById(id);
+		if (!prescription) {
+			return res.status(404).json({ message: 'Prescription not found' });
+		}
+		res.json({ message: 'Prescription fetched successfully', prescription });
+	} catch (error) {
+		res.status(500).json({ message: 'Error fetching prescription', error });
+	}
+}

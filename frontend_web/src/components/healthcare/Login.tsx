@@ -1,16 +1,39 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const HealthcareLoginForm: React.FC = () => {
+    const navigate = useNavigate();
     const [loginMethod, setLoginMethod] = useState('email'); // Default is email
     const [logindata, setLogindata] = useState({
         email: '',
         phone: '',
         password: '',
     });
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log(logindata);
         // Handle login logic here
+        try {
+            const response = await fetch('http://localhost:3000/api/v1/user/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(logindata)
+            });
+      
+            if (!response.ok) {
+                throw new Error(`Failed to sign up: ${response.statusText}`);
+            }
+      
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            navigate('/healthcare/dashboard');
+            
+            console.log('Login successful:', data);
+        } catch (error) {
+            console.error('Error during sign up:', error);
+        }
     }
     return (
         <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg">

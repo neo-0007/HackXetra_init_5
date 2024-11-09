@@ -13,7 +13,7 @@ import FindUserByPhoneAndOTP from "./pages/doctors/FindUser";
 import OTPVerification from "./components/doctors/OTPverification";
 import Navbar from "./components/Navbar";
 import FrontPage from "./components/FrontPage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserProtectedRoutes from "./components/users/ProtectedRoutes";
 import HealthcareLogin from "./pages/healthcare/Login";
 import HealthcareSignup from "./pages/healthcare/Signup";
@@ -21,17 +21,44 @@ import UserDashboard from "./pages/users/Dashboard";
 import DoctorDashboard from "./pages/doctors/Dashboard";
 import HealthcareDashboard from "./pages/healthcare/Dashboard";
 
-function App() {
-  const [user, setUser] = useState({
-    id: 1,
-    name: "Dhrit",
-    role: "user", // Change to "doctor" or "healthcare" as needed
-    email: "dhrit@example.com"
-  });
+interface IUSER {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+}
 
-  // const isAuthenticated = !!user;
-  const isAuthenticated = false;
-  
+
+function App() {
+  // const [user, setUser] = useState<IUSER | null>(null);
+const [user, setUser] = useState<IUSER>({
+    _id: "1",
+    name: "John Doe",
+    email: "john@doe",
+    role: "user"
+})
+  const isAuthenticated = !!user;
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (token) {
+  //     fetch("http://localhost:3000/api/v1/user/verify", {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         setUser(data);
+  //       })
+  //       .catch((err) => {
+  //         console.error(err);
+  //       });
+  //   }
+  // }
+  // , []);
+
   const getDashboard = () => {
     if (user?.role === "doctor") return <DoctorDashboard />;
     if (user?.role === "healthcare") return <HealthcareDashboard />;
@@ -40,7 +67,7 @@ function App() {
 
   return (
     <Router>
-      <Navbar isAuthenticated={isAuthenticated} userName={""} />
+      <Navbar isAuthenticated={isAuthenticated} userName={(!!user)?(user?.name):""} />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={isAuthenticated ? getDashboard() : <FrontPage />} />
