@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { generateAccessToken, verifyToken } from "../utills/jwt.js";
 import FormData from "form-data";
 import axios from "axios";
+import { Prescription } from "../models/prescription.js";
 
 // Define the structuredPrescriptionOutput function
 const structuredPrescriptionOutput = async (filePath, mimeType) => {
@@ -345,8 +346,8 @@ export const uploadPrescription = async (req, res) => {
 			);
 
 			// Optionally clean up the uploaded files after processing
-			fs.unlinkSync(file.path); // Clean up the original file
-			fs.unlinkSync(enhancedImagePath); // Clean up the enhanced file if no longer needed
+			// fs.unlinkSync(file.path); // Clean up the original file
+			// fs.unlinkSync(enhancedImagePath); // Clean up the enhanced file if no longer needed
 
 			res.json(jsonResponse);
 		});
@@ -457,5 +458,46 @@ export const decodeToken = async (req, res) => {
 		res.json({ message: 'Token decoded successfully', user: { id: user._id, name: user.name, email: user.email, role: user.role } });
 	} catch (error) {
 		res.status(500).json({ message: 'Error decoding token', error });
+	}
+}
+
+// Backend - addPrescription handler function
+export const addPrescription = async (req, res) => {
+    try {
+        const { user_id, doctor, prescription, medicalCondition } = req.body;
+
+        const newPrescription = await Prescription.create({
+            user_id,
+            doctor,
+            prescription,
+            medicalCondition
+        });
+
+        res.status(201).json({ message: 'Prescription added successfully', prescription: newPrescription });
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding prescription', error });
+    }
+};
+
+export const getAllPrescriptionsByID = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const prescriptions = await Prescription.find({ user_id: id });
+		res.json({ message: 'Prescriptions fetched successfully', prescriptions });
+	} catch (error) {
+		res.status(500).json({ message: 'Error fetching prescriptions', error });
+	}
+}
+
+export const getPrescriptionByID = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const prescription = await Prescription.findById(id);
+		if (!prescription) {
+			return res.status(404).json({ message: 'Prescription not found' });
+		}
+		res.json({ message: 'Prescription fetched successfully', prescription });
+	} catch (error) {
+		res.status(500).json({ message: 'Error fetching prescription', error });
 	}
 }

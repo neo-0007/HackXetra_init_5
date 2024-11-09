@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
+import { DiGitBranch } from 'react-icons/di';
 
 interface FileType {
     name: string;
@@ -68,6 +69,34 @@ const UploadPresc = () => {
                 const data = await response.json();
                 setUploadSuccess('Successfully uploaded!');
                 console.log('Successfully uploaded:', data);
+                // {Adding to the DB}
+                
+
+                // Prepare data to store in /prescription/add
+            const addData = {
+                user_id: "672fa3fbd858f1b485738fd2",
+                doctor: data.doctor,
+                prescription: data.prescription,
+                medicalCondition: data.medicalCondition
+            };
+
+            // Second POST request to store prescription in database
+            const addResponse = await fetch('http://localhost:3000/api/v1/user/prescription/add/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify(addData),
+            });
+
+            if (!addResponse.ok) {
+                throw new Error(`Failed to add: ${addResponse.statusText}`);
+            }
+
+            const addResult = await addResponse.json();
+            console.log('Successfully added prescription:', addResult);
+
             } catch (error) {
                 setUploadError('Error during uploading, please try again.');
                 console.error('Error during uploading:', error);

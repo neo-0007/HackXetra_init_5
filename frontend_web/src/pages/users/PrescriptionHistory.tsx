@@ -1,55 +1,74 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
 
+interface IPrescription {
+    _id: number;
+    name: string;
+    date: string;
+    doctor: {
+        name: string;
+    };
+    createdAt: string;
+}
+
 const UserPrescriptionHistory = () => {
     const navigate = useNavigate();
-    const [prescriptions, setPrescriptions] = React.useState([
-        {
-            id: "fgehgt5ghuhbgunbugj1",
-            name: 'Siddharth Medical',
-            date: '27th October 2024',
-            doctor: 'Dr. Rajib Gayan',
-        },
-        {
-            id: "fgehgt5ghuhbgunbugj2",
-            name: 'Pranjal Medical',
-            date: '4th October 2024',
-            doctor: 'Dr. Pranjal Gayan',
-        },
-        {
-            id: "fgehgt5ghuhbgunbugj3",
-            name: 'Rosy Medical',
-            date: '9th September 2024',
-            doctor: 'Dr. Rosy Sharma',
-        }
-    ]);
+    const [prescriptions, setPrescriptions] = useState<IPrescription[] | null>(null);
+    const [loading, setLoading] = useState(true);
+
+      // Fetch prescriptions data
+      useEffect(() => {
+        const fetchPrescriptions = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/user/prescription/all/672fa3fbd858f1b485738fd2', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch prescriptions');
+                }
+                const data = await response.json();
+                setPrescriptions(data.prescriptions);
+                console.log('Prescriptions:', prescriptions);
+
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+            }
+        };
+
+        fetchPrescriptions();
+    }, []);
 
 
     return (
         <div className="min-h-screen bg-gray-100 py-10">
-            <div className="flex items-center justify-center px-3 py-5 text-3xl font-bold text-blue-600">
+             <div className="flex items-center justify-center px-3 py-5 text-3xl font-bold text-blue-600">
                 <h1>Prescription History</h1>
             </div>
 
             <div className="max-w-3xl mx-auto space-y-6">
-                {prescriptions.map((prescription) => (
+
+
+                {prescriptions && prescriptions.map((prescription) => (
                     <div
-                        key={prescription.id}
+                        key={prescription._id}
                         className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow flex justify-between items-center"
                     >
                         <div>
                             <div className="text-lg font-semibold text-gray-800">
-                                {prescription.name}, {prescription.date}
+                                {prescription.doctor.name}, {prescription.createdAt}
                             </div>
                             <div className="mt-2 text-gray-600">
                                 <p className="font-medium">
-                                    Prescribed by <span className="text-blue-600">{prescription.doctor}</span>
+                                    Prescribed by <span className="text-blue-600">{prescription.doctor.name}</span>
                                 </p>
                             </div>
                             <div className="mt-4 flex space-x-4">
                                 <button
-                                    onClick={() => navigate(`/user/prescription?id=${prescription.id}`)}
+                                    onClick={() => navigate(`/user/prescription?id=${prescription._id}`)}
                                     className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                                 >
                                     View Digital Prescription
@@ -67,7 +86,7 @@ const UserPrescriptionHistory = () => {
                         </button>
                     </div>
                 ))}
-            </div>
+            </div> 
         </div>
     );
 };
