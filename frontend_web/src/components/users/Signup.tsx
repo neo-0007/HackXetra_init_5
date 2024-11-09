@@ -1,10 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const SignupForm: React.FC = (props) => {
+    const [signup, setSignup] = useState({
+        firstName: '',
+        lastName: '',
+        dob: '',
+        gender: '',
+        phone: '',
+        email: '',
+        address1: '',
+        address2: '',
+        city: '',
+        pin: '',
+        district: '',
+        state: '',
+        country: '',
+        password: '',
+        confirmPassword: '',
+        role: 'user'
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log(signup);
+    };
+
     return (
         <div className="w-full max-w-2xl p-8 space-y-6 bg-white shadow-xl rounded-lg mx-auto">
             <h2 className="text-3xl font-bold text-center text-gray-700">Sign Up</h2>
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Name Fields */}
                 <div className="sm:flex sm:space-x-4">
                     <div className="w-full">
@@ -12,6 +36,8 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="text"
                             placeholder="John"
+                            onChange={(e) => setSignup({ ...signup, firstName: e.target.value })}
+                            value={signup.firstName}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -20,6 +46,8 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="text"
                             placeholder="Doe"
+                            onChange={(e) => setSignup({ ...signup, lastName: e.target.value })}
+                            value={signup.lastName}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -31,12 +59,16 @@ const SignupForm: React.FC = (props) => {
                         <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
                         <input
                             type="date"
+                            onChange={(e) => setSignup({ ...signup, dob: e.target.value })}
+                            value={signup.dob}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
                     <div className="w-full">
                         <label className="block text-sm font-medium text-gray-700">Gender</label>
                         <select
+                            onChange={(e) => setSignup({ ...signup, gender: e.target.value })}
+                            value={signup.gender}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none bg-white focus:ring-2 focus:ring-blue-500"
                         >
                             <option value="" disabled selected>
@@ -56,6 +88,8 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="tel"
                             placeholder="9797495903"
+                            onChange={(e) => setSignup({ ...signup, phone: e.target.value })}
+                            value={signup.phone}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -64,6 +98,8 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="email"
                             placeholder="johndoe@gmail.com"
+                            onChange={(e) => setSignup({ ...signup, email: e.target.value })}
+                            value={signup.email}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -75,6 +111,8 @@ const SignupForm: React.FC = (props) => {
                     <input
                         type="text"
                         placeholder="123 Street Name"
+                        onChange={(e) => setSignup({ ...signup, address1: e.target.value })}
+                        value={signup.address1}
                         className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
@@ -83,6 +121,8 @@ const SignupForm: React.FC = (props) => {
                     <input
                         type="text"
                         placeholder="Apt, Suite, etc. (optional)"
+                        onChange={(e) => setSignup({ ...signup, address2: e.target.value })}
+                        value={signup.address2}
                         className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
@@ -92,6 +132,8 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="text"
                             placeholder="City"
+                            onChange={(e) => setSignup({ ...signup, city: e.target.value })}
+                            value={signup.city}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -100,6 +142,8 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="text"
                             placeholder="123456"
+                            onChange={(e) => setSignup({ ...signup, pin: e.target.value })}
+                            value={signup.pin}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -110,6 +154,8 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="text"
                             placeholder="District"
+                            onChange={(e) => setSignup({ ...signup, district: e.target.value })}
+                            value={signup.district}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -118,6 +164,8 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="text"
                             placeholder="State"
+                            onChange={(e) => setSignup({ ...signup, state: e.target.value })}
+                            value={signup.state}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -127,6 +175,8 @@ const SignupForm: React.FC = (props) => {
                     <input
                         type="text"
                         placeholder="Country"
+                        onChange={(e) => setSignup({ ...signup, country: e.target.value })}
+                        value={signup.country}
                         className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
@@ -138,6 +188,8 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="password"
                             placeholder="Password"
+                            onChange={(e) => setSignup({ ...signup, password: e.target.value })}
+                            value={signup.password}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -146,34 +198,19 @@ const SignupForm: React.FC = (props) => {
                         <input
                             type="password"
                             placeholder="Confirm Password"
+                            onChange={(e) => setSignup({ ...signup, confirmPassword: e.target.value })}
+                            value={signup.confirmPassword}
                             className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
                 </div>
 
-                {/* Sign Up Button */}
-                <button className="w-full py-2 mt-4 text-white bg-blue-600 rounded-md hover:bg-blue-700">
-                    Sign Up
-                </button>
+                <div className="flex justify-center">
+                    <button type="submit" className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        Sign Up
+                    </button>
+                </div>
             </form>
-
-            {/* Additional Links */}
-            <div className="text-center">
-                <a href="#" className="text-blue-600 hover:underline">Forgot password?</a>
-            </div>
-            <div className="flex items-center justify-center mt-4 space-x-2">
-                <span className="text-gray-500">or</span>
-            </div>
-            <div className="flex items-center justify-center space-x-4">
-                <button className="flex items-center px-4 py-2 border rounded-md">
-                    <img src="/public/google.png" alt="Google" className="w-5 h-5 mr-2" />
-                    Sign up with Google
-                </button>
-            </div>
-            <div className="text-center mt-4">
-                <span>Already have an account? </span>
-                <a href="/user/login" className="text-blue-600 hover:underline">Log In</a>
-            </div>
         </div>
     );
 };
