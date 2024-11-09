@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/features/auth/services/auth_services.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_big_text.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_button.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_form_field.dart';
@@ -17,6 +18,26 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  AuthServices authServices = AuthServices();
+
+  Future<void> loginUser() async {
+    String email = emailController.text;
+    String password = passwordController.text;
+
+    final result = await authServices.login(email, password);
+    if (result == 'Success') {
+      if (!mounted) return;
+      context.goNamed(RouteConstants.rootHomePage);
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +68,9 @@ class _LoginPageState extends State<LoginPage> {
               height: 30,
             ),
             //Login button
-            AuthButton(buttonText: 'Login', onPressed: () => context.goNamed(RouteConstants.rootHomePage)),
+            AuthButton(buttonText: 'Login', onPressed: () {
+              loginUser();
+            }),
             const SizedBox(
               height: 20,
             ),
@@ -110,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
                 ),
                 InkWell(
-                  onTap:() => context.goNamed(RouteConstants.signup),  
+                  onTap: () => context.goNamed(RouteConstants.signup),
                   child: const Text(
                     'SignUp',
                     style: TextStyle(
