@@ -7,6 +7,7 @@ import {
 
 import {
 	uploadPrescription,
+	uploadLabReport,
 	userSignUp,
 	userLogIn,
 	decodeToken,
@@ -18,6 +19,15 @@ const router = express.Router();
 router.post("/signup", userSignUp);
 router.post("/login", userLogIn);
 router.post("/verify", decodeToken);
-router.post("/upload", upload.single("image"), uploadPrescription);
+router.post(
+	"/upload-prescription",
+	prescriptionUpload.single("image"),
+	uploadPrescription
+);
+router.post(
+	"/upload-lab-report",
+	labReportUpload.single("image"),
+	uploadLabReport
+);
 
 export default router;

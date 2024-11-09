@@ -8,11 +8,12 @@ import User from "../models/users.js";
 import bcrypt from "bcryptjs";
 import { generateAccessToken, verifyToken } from "../utills/jwt.js";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 // Define the structuredPrescriptionOutput function
 const structuredPrescriptionOutput = async (filePath, mimeType) => {
-	const genAI = new GoogleGenerativeAI(
-		"AIzaSyD6SwZ0GQ-zeZ1r9Rvnp8hDcbwMGoxpm7I"
-	); // Replace with your actual API key
+	const genAI = new GoogleGenerativeAI(process.env.GEN_AI_API_KEY); // Replace with your actual API key
 
 	const schema = {
 		type: SchemaType.OBJECT,
@@ -94,9 +95,7 @@ const structuredPrescriptionOutput = async (filePath, mimeType) => {
 };
 
 const structuredLabReportOutput = async (filePath, mimeType) => {
-	const genAI = new GoogleGenerativeAI(
-		"AIzaSyD6SwZ0GQ-zeZ1r9Rvnp8hDcbwMGoxpm7I"
-	); // Replace with your actual API key
+	const genAI = new GoogleGenerativeAI(process.env.GEN_AI_API_KEY); // Replace with your actual API key
 
 	const schema = {
 		type: SchemaType.OBJECT,

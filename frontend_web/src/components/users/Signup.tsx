@@ -6,109 +6,48 @@ import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const SignupForm: React.FC = () => {
-    const [signup, setSignup] = useState({
-        firstName: '',
-        lastName: '',
-        dob: '',
-        gender: '',
-        phone: '',
-        email: '',
-        address1: '',
-        address2: '',
-        city: '',
-        pin: '',
-        district: '',
-        state: '',
-        country: '',
-        password: '',
-        confirmPassword: '',
-        isVerified: true,
-        role: 'user'
-    });
+	const [signup, setSignup] = useState({
+		firstName: "",
+		lastName: "",
+		dob: "",
+		gender: "",
+		phone: "",
+		email: "",
+		address1: "",
+		address2: "",
+		city: "",
+		pin: "",
+		district: "",
+		state: "",
+		country: "",
+		password: "",
+		confirmPassword: "",
+		isVerified: true,
+		role: "user",
+	});
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const response = await fetch('http://localhost:3000/api/v1/user/signup/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(signup)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to sign up: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log('Sign up successful:', data);
-        } catch (error) {
-            console.error('Error during sign up:', error);
-        }
-    };
-
-		const {
-			firstName,
-			lastName,
-			dob,
-			gender,
-			phone,
-			email,
-			address1,
-			address2,
-			city,
-			pin,
-			district,
-			state,
-			country,
-			password,
-			confirmPassword,
-			role,
-		} = signup;
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
 		try {
-			if (password.length < 8) {
-				console.log("Password should be atleast 8 characters");
-				toast.error("Password should be atleast 8 characters", {
-					position: "bottom-center",
-				});
-				return;
-			}
-			await createUserWithEmailAndPassword(auth, email, password);
-			const user = auth.currentUser;
-			console.log(user);
-			if (user) {
-				await setDoc(doc(db, "users", user.uid), {
-					firstName: firstName,
-					lastName: lastName,
-					dob: dob,
-					gender: gender,
-					phone: phone,
-					email: email,
-					address: address1 + ", " + address2,
-					city: city,
-					pin: pin,
-					district: district,
-					state: state,
-					country: country,
-					password: password,
-					role: "user",
-				});
-			}
-			console.log("User Created Successfully");
-			toast.success("User Created Successfully !!", {
-				position: "top-center",
-			});
+			const response = await fetch(
+				"http://localhost:3000/api/v1/user/signup/",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(signup),
+				}
+			);
 
-			const timeout = setTimeout(() => {
-				clearTimeout(timeout);
-				navigate("/");
-			}, 1000);
-		} catch (error: any) {
-			console.log(error.message);
-			toast.error("User Already Registered", {
-				position: "bottom-center",
-			});
+			if (!response.ok) {
+				throw new Error(`Failed to sign up: ${response.statusText}`);
+			}
+
+			const data = await response.json();
+			console.log("Sign up successful:", data);
+		} catch (error) {
+			console.error("Error during sign up:", error);
 		}
 	};
 
@@ -117,7 +56,7 @@ const SignupForm: React.FC = () => {
 			<h2 className="text-3xl font-bold text-center text-gray-700">
 				Sign Up
 			</h2>
-			<form onSubmit={handleSignUp} className="space-y-4">
+			<form onSubmit={handleSubmit} className="space-y-4">
 				{/* Name Fields */}
 				<div className="sm:flex sm:space-x-4">
 					<div className="w-full">
