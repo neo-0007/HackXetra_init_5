@@ -200,7 +200,7 @@ const DoctorSignupForm: React.FC = (props) => {
             </div>
             <div className="text-center mt-4">
                 <span>Already have an account? </span>
-                <a href="/user/login" className="text-blue-600 hover:underline">Log In</a>
+                <a href="/doctor/login" className="text-blue-600 hover:underline">Log In</a>
             </div>
         </div>
     );

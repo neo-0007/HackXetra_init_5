@@ -15,16 +15,19 @@ import Navbar from "./components/Navbar";
 import FrontPage from "./components/FrontPage";
 import { useState } from "react";
 import UserProtectedRoutes from "./components/users/ProtectedRoutes";
+import HealthcareLogin from "./pages/healthcare/Login";
+import HealthcareSignup from "./pages/healthcare/Signup";
+import UserDashboard from "./pages/users/Dashboard";
 
 function App() {
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(true);
 
   return (
     <Router>
-      <Navbar isAuthenticated={isUserAuthenticated} userName={""} />
+      <Navbar isAuthenticated={isUserAuthenticated} userName={"Dhrit"} />
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<>{isUserAuthenticated?(<div>Hello World!</div>):(<FrontPage />)}</>} />
+        <Route path="/" element={<>{isUserAuthenticated?(<UserDashboard />):(<FrontPage />)}</>} />
         <Route path="/user/login" element={<UserLogin />} />
         <Route path="/user/signup" element={<UserSignup />} />
         
@@ -43,6 +46,10 @@ function App() {
         <Route path="/doctor/signup" element={<DoctorSignup />} />
         <Route path="/doctor/users" element={<FindUserByPhoneAndOTP />} />
         <Route path="/doctor/user/otp" element={<OTPVerification />} />
+
+        {/* {Healthcare Routes} */}
+        <Route path="/healthcare/login" element={<HealthcareLogin />} />
+        <Route path="/healthcare/signup" element={<HealthcareSignup />} />
       </Routes>
     </Router>
   );
