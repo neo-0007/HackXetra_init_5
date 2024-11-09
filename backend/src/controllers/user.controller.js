@@ -2,6 +2,7 @@ import fs, { promises as fsPromises } from "fs";
 // import path from "path";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SchemaType } from "@google/generative-ai";
+import User from "../models/users.js";
 
 // Define the structuredOutputWithSchemaAndImage function
 const structuredOutputWithSchemaAndImage = async (file) => {
@@ -106,3 +107,15 @@ export const uploadPrescription = async (req, res) => {
 		res.status(500).json({ error: "Failed to process image" });
 	}
 };
+
+export const userSignUp = async (req, res) => {
+	try {
+		const newUser = await User.create(req.body);
+		res.status(201).json({ message: 'User registered successfully', user: newUser });
+	} catch (error) {
+		res.status(500).json({ message: 'Error registering user', error });
+	}
+};
+
+
+
