@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { useAppContext } from "../../App";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm: React.FC = () => {
+	const { setUser, setIsAuthenticated } = useAppContext();
 	const [loginMethod, setLoginMethod] = useState("email"); // Default is email
 	const [loginData, setLoginData] = useState({
 		email: "",
@@ -8,28 +12,41 @@ const LoginForm: React.FC = () => {
 		password: "",
 	});
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+	const navigate = useNavigate();
 
-    try {
-      const response = await fetch('http://localhost:3000/api/v1/user/login/', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(loginData)
-      });
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
 
-      if (!response.ok) {
-          throw new Error(`Failed to sign up: ${response.statusText}`);
-      }
+		try {
+			const response = await fetch(
+				"http://localhost:3000/api/v1/user/login/",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(loginData),
+				}
+			);
 
-      const data = await response.json();
-      console.log('Login successful:', data);
-  } catch (error) {
-      console.error('Error during sign up:', error);
-  }
-  };
+			if (!response.ok) {
+				throw new Error(`Failed to sign up: ${response.statusText}`);
+			}
+
+			const data = await response.json();
+			console.log("Login successful:", data);
+
+			localStorage.setItem("token", data.token);
+
+			setUser(data.user);
+			setIsAuthenticated(true);
+			toast.success("Login successful!");
+
+			setTimeout(() => navigate("/"), 2000);
+		} catch (error) {
+			console.error("Error during sign up:", error);
+		}
+	};
 
 	return (
 		<div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg">

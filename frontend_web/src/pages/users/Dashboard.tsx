@@ -44,7 +44,7 @@ const UserDashboard = () => {
             <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                 {/* Upload Prescription Button */}
                 <div
-                    onClick={() => navigate('/user/prescription/upload')}
+                    onClick={() => navigate(`/user/prescription/upload?id=${user?.id}`)}
                     className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center cursor-pointer hover:shadow-2xl transition-transform transform hover:scale-105"
                 >
                     <AiOutlineFileAdd className="text-5xl text-blue-500 mb-4" />

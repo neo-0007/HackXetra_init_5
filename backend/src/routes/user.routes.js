@@ -5,7 +5,7 @@ import {
 } from "../middleware/multer.middleware.js";
 // import path from "path";
 
-import { uploadPrescription, userSignUp,userLogIn, decodeToken, uploadLabReport, addPrescription, getAllPrescriptionsByID, getPrescriptionByID } from "../controllers/user.controller.js";
+import { uploadPrescription, userSignUp,userLogIn, decodeToken, uploadLabReport, addPrescription, getAllPrescriptionsByID, getPrescriptionByID, getUserByID } from "../controllers/user.controller.js";
 
 
 const router = express.Router();
@@ -27,5 +27,9 @@ router.post(
 router.post("/prescription/add", addPrescription);
 router.get("/prescription/all/:id", getAllPrescriptionsByID);
 router.get("/prescription/byID/:id", getPrescriptionByID);
+router.get("/test", (req, res) => {
+	res.send(process.env.GEN_AI_API_KEY);
+})
+router.get("/byID/:id", getUserByID)
 
 export default router;

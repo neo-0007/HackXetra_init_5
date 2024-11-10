@@ -2,18 +2,19 @@ import fs, { promises as fsPromises } from "fs";
 // import path from "path";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SchemaType } from "@google/generative-ai";
+import FormData from "form-data";
+import axios from "axios";
 import User from "../models/users.js";
 import bcrypt from "bcryptjs";
 import { generateAccessToken, verifyToken } from "../utills/jwt.js";
-import FormData from "form-data";
-import axios from "axios";
+
+import dotenv from "dotenv";
 import { Prescription } from "../models/prescription.js";
+dotenv.config();
 
 // Define the structuredPrescriptionOutput function
 const structuredPrescriptionOutput = async (filePath, mimeType) => {
-	const genAI = new GoogleGenerativeAI(
-		"AIzaSyD6SwZ0GQ-zeZ1r9Rvnp8hDcbwMGoxpm7I"
-	); // Replace with your actual API key
+	const genAI = new GoogleGenerativeAI(process.env.GEN_AI_API_KEY); // Replace with your actual API key
 
 	const schema = {
 		type: SchemaType.OBJECT,
@@ -95,9 +96,7 @@ const structuredPrescriptionOutput = async (filePath, mimeType) => {
 };
 
 const structuredLabReportOutput = async (filePath, mimeType) => {
-	const genAI = new GoogleGenerativeAI(
-		"AIzaSyD6SwZ0GQ-zeZ1r9Rvnp8hDcbwMGoxpm7I"
-	); // Replace with your actual API key
+	const genAI = new GoogleGenerativeAI(process.env.GEN_AI_API_KEY); // Replace with your actual API key
 
 	const schema = {
 		type: SchemaType.OBJECT,
@@ -416,9 +415,12 @@ export const uploadLabReport = async (req, res) => {
 export const userSignUp = async (req, res) => {
 	try {
 		const newUser = await User.create(req.body);
-		res.status(201).json({ message: 'User registered successfully', user: newUser });
+		res.status(201).json({
+			message: "User registered successfully",
+			user: newUser,
+		});
 	} catch (error) {
-		res.status(500).json({ message: 'Error registering user', error });
+		res.status(500).json({ message: "Error registering user", error });
 	}
 };
 
@@ -429,37 +431,52 @@ export const userLogIn = async (req, res) => {
 		// Check if the user exists
 		const user = await User.findOne({ email });
 		if (!user) {
-			return res.status(404).json({ message: 'User not found' });
+			return res.status(404).json({ message: "User not found" });
 		}
 
 		// Compare the provided password with the hashed password
 		const isPasswordValid = await bcrypt.compare(password, user.password);
-		const token = generateAccessToken(user._id);
 		if (!isPasswordValid) {
-			return res.status(401).json({ message: 'Invalid email or password' });
+			return res
+				.status(401)
+				.json({ message: "Invalid email or password" });
 		}
+		const token = generateAccessToken(user._id);
 
 		// If authentication is successful, you can proceed to create a session or JWT token
 		// Here we are just returning a success message
-		res.status(200).json({ message: 'Login successful', token, user: { id: user._id, email: user.email, role: user.role } });
+		res.status(200).json({
+			message: "Login successful",
+			token,
+			user: { id: user._id, email: user.email, role: user.role },
+		});
 	} catch (error) {
-		res.status(500).json({ message: 'Error logging in', error });
+		res.status(500).json({ message: "Error logging in", error });
 	}
-}
+};
 
 export const decodeToken = async (req, res) => {
 	try {
-		const token = req.headers.authorization.split(' ')[1];
+		const token = req.headers.authorization.split(" ")[1];
 		const decoded = verifyToken(token);
 		const user = await User.findById(decoded.id);
 		if (!user) {
-			return res.status(404).json({ message: 'User not found' });
+			return res.status(404).json({ message: "User not found" });
 		}
-		res.json({ message: 'Token decoded successfully', user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+		res.json({
+			message: "Token decoded successfully",
+			user: {
+				id: user._id,
+				name: user.firstName + " " + user.lastName,
+				email: user.email,
+				role: user.role,
+				gender: user.gender
+			},
+		});
 	} catch (error) {
-		res.status(500).json({ message: 'Error decoding token', error });
+		res.status(500).json({ message: "Error decoding token", error });
 	}
-}
+};
 
 // Backend - addPrescription handler function
 export const addPrescription = async (req, res) => {
@@ -499,5 +516,20 @@ export const getPrescriptionByID = async (req, res) => {
 		res.json({ message: 'Prescription fetched successfully', prescription });
 	} catch (error) {
 		res.status(500).json({ message: 'Error fetching prescription', error });
+	}
+}
+
+export const getUserByID = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const user = await User
+			.findById(id)
+			.select('-password');
+		if (!user) {
+			return res.status(404).json({ message: 'User not found' });
+		}
+		res.json({ message: 'User fetched', user })
+	} catch (error) {
+		res.status(500).json({ message: 'Error fetching user', error });
 	}
 }

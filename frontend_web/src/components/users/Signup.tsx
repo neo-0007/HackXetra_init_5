@@ -1,50 +1,96 @@
-import React, { FormEvent, useState } from "react";
-
+import React, { useState } from "react";
+import { useAppContext } from "../../App";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const SignupForm: React.FC = () => {
-    const [signup, setSignup] = useState({
-        firstName: '',
-        lastName: '',
-        dob: '',
-        gender: '',
-        phone: '',
-        email: '',
-        address1: '',
-        address2: '',
-        city: '',
-        pin: '',
-        district: '',
-        state: '',
-        country: '',
-        password: '',
-        confirmPassword: '',
-        isVerified: true,
-        role: 'user'
-    });
+	const [signup, setSignup] = useState({
+		firstName: "",
+		lastName: "",
+		dob: "",
+		gender: "",
+		phone: "",
+		email: "",
+		address1: "",
+		address2: "",
+		city: "",
+		pin: "",
+		district: "",
+		state: "",
+		country: "",
+		password: "",
+		confirmPassword: "",
+		isVerified: true,
+		role: "user",
+	});
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const response = await fetch('http://localhost:3000/api/v1/user/signup/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(signup)
-            });
+	const navigate = useNavigate();
 
-            if (!response.ok) {
-                throw new Error(`Failed to sign up: ${response.statusText}`);
-            }
+	const { setUser, setIsAuthenticated } = useAppContext();
 
-            const data = await response.json();
-            console.log('Sign up successful:', data);
-        } catch (error) {
-            console.error('Error during sign up:', error);
-        }
-    };
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		try {
+			const response = await fetch(
+				"http://localhost:3000/api/v1/user/signup/",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(signup),
+				}
+			);
 
+			if (!response.ok) {
+				throw new Error(`Failed to sign up: ${response.statusText}`);
+			}
+
+			const data = await response.json();
+			console.log("Sign up successful:", data);
+		} catch (error) {
+			console.error("Error during sign up:", error);
+		} finally {
+			try {
+				const response = await fetch(
+					"http://localhost:3000/api/v1/user/login/",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							email: signup.email,
+							password: signup.password,
+						}),
+					}
+				);
+
+				if (!response.ok) {
+					throw new Error(
+						`Failed to sign up: ${response.statusText}`
+					);
+				}
+
+				const data = await response.json();
+				console.log("Sign up successful:", data);
+
+				localStorage.setItem("token", data.token);
+
+				const user = {
+					id: data.user._id,
+					email: data.user.email,
+					role: data.user.role,
+				};
+
+				setUser(user);
+				setIsAuthenticated(true);
+
+				toast.success("Sign up successful!");
+				setTimeout(() => navigate("/"), 2000);
+			} catch (error) {}
+		}
+	};
 
 	return (
 		<div className="w-full max-w-2xl p-8 space-y-6 bg-white shadow-xl rounded-lg mx-auto">
