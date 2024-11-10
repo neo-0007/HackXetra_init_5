@@ -35,12 +35,25 @@ const UserDashboard = () => {
             }
         }
         fetchUserDetails();
-    }, [])
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        window.location.reload(); // Refresh the page after logout
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-100 via-white to-blue-100 flex flex-col items-center py-10">
             <h1 className="text-4xl font-bold text-blue-700 mb-10">Welcome to Your Dashboard</h1>
             
+            {/* Logout Button */}
+            <div
+                onClick={handleLogout}
+                className="mb-8 px-6 py-2 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600 transition-colors"
+            >
+                Logout
+            </div>
+
             <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                 {/* Upload Prescription Button */}
                 <div

@@ -145,13 +145,13 @@ const ScanAndGet = () => {
             {/* File List */}
             {file && <FileList file={file} />}
 
-            {/* Upload Button */}
+            {/* Scan Button */}
             {file && file.progress === 100 && (
                 <button
                     onClick={handleSubmit}
                     className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
-                    Upload
+                    Scan
                 </button>
             )}
 

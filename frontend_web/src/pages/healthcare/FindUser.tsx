@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const HealthcareFindUserByEmailAndOTP = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
     const [userFound, setUserFound] = useState(false);
@@ -40,6 +42,7 @@ const HealthcareFindUserByEmailAndOTP = () => {
         if (otp.length === 6) {
             // Replace this with actual OTP verification logic
             console.log("OTP verified:", otp);
+            navigate("/healthcare/user/dashboard"); // Redirect to dashboard
         } else {
             setError("Please enter a 6-digit OTP.");
         }

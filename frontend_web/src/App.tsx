@@ -35,6 +35,9 @@ import { useContext } from "react";
 
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
+import ScanAndGet from "./pages/healthcare/ScanPres";
+import HealthcareFindUserByEmailAndOTP from "./pages/healthcare/FindUser";
+import UserDashboardHealthcare from "./pages/healthcare/UserDashboard";
 
 // Define the types for the AppContext
 interface User {
@@ -220,6 +223,18 @@ function App() {
 						<Route
 							path="/healthcare/dashboard"
 							element={<HealthcareDashboard />}
+						/>
+						<Route
+							path="/healthcare/users"
+							element={<HealthcareFindUserByEmailAndOTP />}
+						/>
+						<Route
+							path="/healthcare/user/dashboard"
+							element={<UserDashboardHealthcare />}
+						/>
+						<Route
+							path="/healthcare/scan"
+							element={<ScanAndGet />}
 						/>
 						{/* Add additional healthcare routes here */}
 					</Route>

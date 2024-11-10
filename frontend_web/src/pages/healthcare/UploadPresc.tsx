@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { DiGitBranch } from 'react-icons/di';
+import { useLocation } from 'react-router-dom';
+import { MoonLoader } from 'react-spinners';
 
 interface FileType {
     name: string;
@@ -14,6 +16,8 @@ const UploadPrescHealthcare = () => {
     const [file, setFile] = useState<FileType | null>(null);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+    const location = useLocation(); // Move useLocation hook here
+    const [loading, setLoading] = useState(false);
 
     const handleFileUpload = (uploadedFile: File) => {
         setFile({
@@ -44,7 +48,10 @@ const UploadPrescHealthcare = () => {
     };
 
     const handleSubmit = async () => {
+        setLoading(true);
         if (file) {
+            const searchParams = new URLSearchParams(location.search); // Use location here
+            const id = searchParams.get('id');
             console.log('Uploading file:', file);
             setUploadError(null);
             setUploadSuccess(null);
@@ -69,37 +76,40 @@ const UploadPrescHealthcare = () => {
                 const data = await response.json();
                 setUploadSuccess('Successfully uploaded!');
                 console.log('Successfully uploaded:', data);
-                // {Adding to the DB}
-                
 
                 // Prepare data to store in /prescription/add
-            const addData = {
-                user_id: "672fa3fbd858f1b485738fd2",
-                doctor: data.doctor,
-                prescription: data.prescription,
-                medicalCondition: data.medicalCondition
-            };
+                const addData = {
+                    user_id: id,
+                    doctor: data.doctor,
+                    prescription: data.prescription,
+                    medicalCondition: data.medicalCondition
+                };
 
-            // Second POST request to store prescription in database
-            const addResponse = await fetch('http://localhost:3000/api/v1/user/prescription/add/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(addData),
-            });
+                // Second POST request to store prescription in database
+                const addResponse = await fetch('http://localhost:3000/api/v1/user/prescription/add/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    body: JSON.stringify(addData),
+                });
 
-            if (!addResponse.ok) {
-                throw new Error(`Failed to add: ${addResponse.statusText}`);
-            }
+                if (!addResponse.ok) {
+                    throw new Error(`Failed to add: ${addResponse.statusText}`);
+                    setLoading(false);
+                    alert('Something went wrong!');
+                }
 
-            const addResult = await addResponse.json();
-            console.log('Successfully added prescription:', addResult);
+                const addResult = await addResponse.json();
+                setLoading(false);
+                alert('Prescription added successfully!');
+                console.log('Successfully added prescription:', addResult);
 
             } catch (error) {
                 setUploadError('Error during uploading, please try again.');
                 console.error('Error during uploading:', error);
+                setLoading(false);
             }
         }
     };
@@ -124,7 +134,8 @@ const UploadPrescHealthcare = () => {
     }, [file]);
 
     return (
-        <div className="flex flex-col items-center space-y-6">
+        <>
+       {(loading)?(<div className='flex items-center justify-center my-28'><MoonLoader /></div>):(<div className="flex flex-col items-center space-y-6">
             <h2 className="text-xl font-semibold">Upload Your File</h2>
 
             {/* Drag and Drop Area */}
@@ -163,7 +174,8 @@ const UploadPrescHealthcare = () => {
             {/* Display Upload Result */}
             {uploadError && <p className="text-red-500 mt-4">{uploadError}</p>}
             {uploadSuccess && <p className="text-green-500 mt-4">{uploadSuccess}</p>}
-        </div>
+        </div>)}
+        </>
     );
 };
 
