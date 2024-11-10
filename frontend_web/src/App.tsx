@@ -20,6 +20,7 @@ import HealthcareSignup from "./pages/healthcare/Signup";
 import UserDashboard from "./pages/users/Dashboard";
 import DoctorDashboard from "./pages/doctors/Dashboard";
 import HealthcareDashboard from "./pages/healthcare/Dashboard";
+import "react-toastify/dist/ReactToastify.css";
 
 
 interface IUSER {
