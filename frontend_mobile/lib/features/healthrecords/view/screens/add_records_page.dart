@@ -1,4 +1,6 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/features/healthrecords/services/health_record_services.dart';
 import 'package:frontend_mobile/features/healthrecords/view/widgets/health_record_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -10,6 +12,49 @@ class AddRecordsPage extends StatefulWidget {
 }
 
 class _AddRecordsPageState extends State<AddRecordsPage> {
+  HealthRecordServices healthRecordServices = HealthRecordServices();
+  bool isLoading = false;
+  PlatformFile? file;
+
+  Future<void> selectFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpeg', 'jpg', 'png'],
+    );
+    if (result != null) {
+      setState(() {
+        file = result.files.first;
+      });
+    }
+  }
+
+  Future<void> addRecord() async {
+    if (file == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a file first'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final res = await healthRecordServices.uploadPrescription(file!);
+
+    setState(() {
+      isLoading = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(res == 'Success' ? 'Record added successfully' : 'Failed to add record: $res'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,29 +79,44 @@ class _AddRecordsPageState extends State<AddRecordsPage> {
             const SizedBox(
               height: 30,
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: InkWell(
-                onTap: () {},
-                child: Container(
-                  
-                  height: 250,
-                  width: MediaQuery.of(context).size.width - 100,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(20, 0, 98, 255),
-                    border: Border.all(width: 2, color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
+            isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: InkWell(
+                      onTap: selectFile,
+                      child: Container(
+                        height: 250,
+                        width: MediaQuery.of(context).size.width - 100,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(20, 0, 98, 255),
+                          border: Border.all(width: 2, color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: file != null
+                              ? Text(
+                                  file!.name,
+                                  style: const TextStyle(color: Colors.black54),
+                                )
+                              : const Icon(Icons.note_add_rounded),
+                        ),
+                      ),
+                    ),
                   ),
-                  child: const Center(
-                    child: Icon(Icons.note_add_rounded),
-                  ),
-                ),
-              ),
-            ),
             const SizedBox(
               height: 20,
             ),
-            SizedBox(height:30,width: MediaQuery.sizeOf(context).width-90,child: HealthRecordButton(buttonText:'Upload', onPressed: (){}))
+            SizedBox(
+              height: 30,
+              width: MediaQuery.of(context).size.width - 90,
+              child: HealthRecordButton(
+                buttonText: 'Upload',
+                onPressed: addRecord,
+              ),
+            ),
           ],
         ),
       ),

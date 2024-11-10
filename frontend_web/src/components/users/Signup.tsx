@@ -88,7 +88,10 @@ const SignupForm: React.FC = () => {
 
 				toast.success("Sign up successful!");
 				setTimeout(() => navigate("/"), 2000);
-			} catch (error) {}
+			} catch (error) {
+				console.error("Error during sign up:", error);
+				toast.error("Sign up failed!");
+			}
 		}
 	};
 

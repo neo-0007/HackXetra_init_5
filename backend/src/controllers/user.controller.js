@@ -470,7 +470,7 @@ export const decodeToken = async (req, res) => {
 				name: user.firstName + " " + user.lastName,
 				email: user.email,
 				role: user.role,
-				gender: user.gender
+				gender: user.gender,
 			},
 		});
 	} catch (error) {
@@ -480,56 +480,66 @@ export const decodeToken = async (req, res) => {
 
 // Backend - addPrescription handler function
 export const addPrescription = async (req, res) => {
-    try {
-        const { user_id, doctor, prescription, medicalCondition } = req.body;
+	try {
+		const { user_id, doctor, prescription, medicalCondition } = req.body;
 
-        const newPrescription = await Prescription.create({
-            user_id,
-            doctor,
-            prescription,
-            medicalCondition
-        });
+		const newPrescription = await Prescription.create({
+			user_id,
+			doctor,
+			prescription,
+			medicalCondition,
+		});
 
-        res.status(201).json({ message: 'Prescription added successfully', prescription: newPrescription });
-    } catch (error) {
-        res.status(500).json({ message: 'Error adding prescription', error });
-    }
+		res.status(201).json({
+			message: "Prescription added successfully",
+			prescription: newPrescription,
+		});
+	} catch (error) {
+		res.status(500).json({ message: "Error adding prescription", error });
+	}
 };
 
 export const getAllPrescriptionsByID = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const prescriptions = await Prescription.find({ user_id: id });
-		res.json({ message: 'Prescriptions fetched successfully', prescriptions });
+		res.json({
+			message: "Prescriptions fetched successfully",
+			prescriptions,
+		});
 	} catch (error) {
-		res.status(500).json({ message: 'Error fetching prescriptions', error });
+		res.status(500).json({
+			message: "Error fetching prescriptions",
+			error,
+		});
 	}
-}
+};
 
 export const getPrescriptionByID = async (req, res) => {
 	try {
 		const id = req.params.id;
 		const prescription = await Prescription.findById(id);
 		if (!prescription) {
-			return res.status(404).json({ message: 'Prescription not found' });
+			return res.status(404).json({ message: "Prescription not found" });
 		}
-		res.json({ message: 'Prescription fetched successfully', prescription });
+		res.json({
+			message: "Prescription fetched successfully",
+			prescription,
+		});
 	} catch (error) {
-		res.status(500).json({ message: 'Error fetching prescription', error });
+		res.status(500).json({ message: "Error fetching prescription", error });
 	}
-}
+};
 
 export const getUserByID = async (req, res) => {
 	try {
 		const id = req.params.id;
-		const user = await User
-			.findById(id)
-			.select('-password');
+		const user = await User.findById(id).select("-password");
 		if (!user) {
-			return res.status(404).json({ message: 'User not found' });
+			return res.status(404).json({ message: "User not found" });
 		}
-		res.json({ message: 'User fetched', user })
+		res.json({ message: "User fetched", user });
 	} catch (error) {
-		res.status(500).json({ message: 'Error fetching user', error });
+		res.status(500).json({ message: "Error fetching user", error });
 	}
-}
+};
