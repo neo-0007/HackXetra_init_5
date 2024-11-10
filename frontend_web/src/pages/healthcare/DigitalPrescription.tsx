@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface IPrescription {
     _id: number;
@@ -24,7 +25,10 @@ interface IUSER {
     role: string;
 }
 
-const DigitalPrescription = () => {
+const HealthDigitalPrescription = () => {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const id = searchParams.get('id');
     const [user, setUser] = useState<IUSER | null>(null);
     const [Prescription, setPrescription] = useState<IPrescription | null>(null);
     
@@ -117,4 +121,4 @@ useEffect(() => {
     );
 };
 
-export default DigitalPrescription;
+export default HealthDigitalPrescription;

@@ -20,6 +20,10 @@ import HealthcareSignup from "./pages/healthcare/Signup";
 import UserDashboard from "./pages/users/Dashboard";
 import DoctorDashboard from "./pages/doctors/Dashboard";
 import HealthcareDashboard from "./pages/healthcare/Dashboard";
+import HealthcareFindUserByPhoneAndOTP from "./pages/healthcare/FindUser";
+import { RiOpenSourceFill } from "react-icons/ri";
+import UserDashboardHealthcare from "./pages/healthcare/UserDashboard";
+import ScanAndGet from "./pages/healthcare/ScanPres";
 
 interface IUSER {
   _id: string;
@@ -35,7 +39,7 @@ const [user, setUser] = useState<IUSER>({
     _id: "1",
     name: "John Doe",
     email: "john@doe",
-    role: "user"
+    role: "healthcare"
 })
   const isAuthenticated = !!user;
 
@@ -98,6 +102,9 @@ const [user, setUser] = useState<IUSER>({
         <Route path="/healthcare/signup" element={<HealthcareSignup />} />
         <Route element={<UserProtectedRoutes isAuthenticated={isAuthenticated && user.role === "healthcare"} />}>
           <Route path="/healthcare/dashboard" element={<HealthcareDashboard />} />
+          <Route path="/healthcare/users" element={<HealthcareFindUserByPhoneAndOTP />} />
+          <Route path="/healthcare/user/dashboard/byID" element={<UserDashboardHealthcare />} />
+          <Route path="/healthcare/scan" element={<ScanAndGet />} />
           {/* Add additional healthcare routes here */}
         </Route>
       </Routes>

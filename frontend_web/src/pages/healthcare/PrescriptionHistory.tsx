@@ -13,7 +13,7 @@ interface IPrescription {
 }
 
 
-const UserPrescriptionHistory = () => {
+const UserPrescriptionHistoryHealthcare = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get('id');
@@ -97,4 +97,4 @@ const UserPrescriptionHistory = () => {
     );
 };
 
-export default UserPrescriptionHistory;
+export default UserPrescriptionHistoryHealthcare;

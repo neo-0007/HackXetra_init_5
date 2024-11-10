@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineFileAdd, AiOutlineFileSearch } from 'react-icons/ai';
 import { BsFileEarmarkMedical } from 'react-icons/bs';
 import { RiFileList2Line } from 'react-icons/ri';
@@ -11,7 +11,10 @@ interface IUSER {
     role: string;
 }
 
-const UserDashboard = () => {
+const UserDashboardHealthcare = () => {
+    const location = useLocation();
+   const searchParams = new URLSearchParams(location.search);
+   const id = searchParams.get('id');
     const [user, setUser] = useState<IUSER | null>(null);
     const navigate = useNavigate();
 
@@ -82,4 +85,4 @@ const UserDashboard = () => {
     );
 };
 
-export default UserDashboard;
+export default UserDashboardHealthcare;
