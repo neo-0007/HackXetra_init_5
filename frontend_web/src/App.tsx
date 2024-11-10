@@ -13,7 +13,7 @@ import FindUserByPhoneAndOTP from "./pages/doctors/FindUser";
 import OTPVerification from "./components/doctors/OTPverification";
 import Navbar from "./components/Navbar";
 import FrontPage from "./components/FrontPage";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import UserProtectedRoutes from "./components/users/ProtectedRoutes";
 import HealthcareLogin from "./pages/healthcare/Login";
 import HealthcareSignup from "./pages/healthcare/Signup";
@@ -29,80 +29,203 @@ interface IUSER {
 }
 
 
+import { createContext } from "react";
+import { useContext } from "react";
+
+import axios from "axios";
+
+// Define the types for the AppContext
+interface User {
+	role?: string;
+	email?: string;
+	id?: string;
+	// Add other user properties as needed
+}
+
+interface AppContextType {
+	user: User;
+	setUser: React.Dispatch<React.SetStateAction<User>>;
+	isAuthenticated: boolean;
+	setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export const useAppContext = () => {
+	const context = useContext(AppContext);
+	if (!context) {
+		throw new Error(
+			"useAppContext must be used within an AppContext.Provider"
+		);
+	}
+	return context;
+};
+
 function App() {
-  // const [user, setUser] = useState<IUSER | null>(null);
-const [user, setUser] = useState<IUSER>({
-    _id: "1",
-    name: "John Doe",
-    email: "john@doe",
-    role: "user"
-})
-  const isAuthenticated = !!user;
+	const [user, setUser] = useState<User>({});
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   if (token) {
-  //     fetch("http://localhost:3000/api/v1/user/verify", {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         setUser(data);
-  //       })
-  //       .catch((err) => {
-  //         console.error(err);
-  //       });
-  //   }
-  // }
-  // , []);
+	// const isAuthenticated = !!user;
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const getDashboard = () => {
-    if (user?.role === "doctor") return <DoctorDashboard />;
-    if (user?.role === "healthcare") return <HealthcareDashboard />;
-    return <UserDashboard />;
-  };
+	const verifyToken = async () => {
+		const token = localStorage.getItem("token");
 
-  return (
-    <Router>
-      <Navbar isAuthenticated={isAuthenticated} userName={(!!user)?(user?.name):""} />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={isAuthenticated ? getDashboard() : <FrontPage />} />
-        <Route path="/user/login" element={<UserLogin />} />
-        <Route path="/user/signup" element={<UserSignup />} />
-        
-        {/* Protected Routes for Users */}
-        <Route element={<UserProtectedRoutes isAuthenticated={isAuthenticated && user.role === "user"} />}>
-          <Route path="/user/prescription/upload" element={<UploadPresc />} />
-          <Route path="/user/prescription/history" element={<UserPrescriptionHistory />} />
-          <Route path="/user/prescription" element={<DigitalPrescription />} />
-          <Route path="/user/testresults/upload" element={<UploadTestRes />} />
-          <Route path="/user/testresults/history" element={<UserTestResults />} />
-          <Route path="/user/testresults" element={<DigitalTestReport />} />
-        </Route>
+		if (!token) {
+			setUser({});
+			setIsAuthenticated(false);
+			return;
+		}
 
-        {/* Doctor Routes */}
-        <Route path="/doctor/login" element={<DoctorLogin />} />
-        <Route path="/doctor/signup" element={<DoctorSignup />} />
-        <Route element={<UserProtectedRoutes isAuthenticated={isAuthenticated && user.role === "doctor"} />}>
-          <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-          <Route path="/doctor/users" element={<FindUserByPhoneAndOTP />} />
-          <Route path="/doctor/user/otp" element={<OTPVerification />} />
-        </Route>
+		try {
+			const response = await axios.post(
+				"http://localhost:3000/api/v1/user/verify",
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
 
-        {/* Healthcare Routes */}
-        <Route path="/healthcare/login" element={<HealthcareLogin />} />
-        <Route path="/healthcare/signup" element={<HealthcareSignup />} />
-        <Route element={<UserProtectedRoutes isAuthenticated={isAuthenticated && user.role === "healthcare"} />}>
-          <Route path="/healthcare/dashboard" element={<HealthcareDashboard />} />
-          {/* Add additional healthcare routes here */}
-        </Route>
-      </Routes>
-    </Router>
-  );
+			if (response.status === 401) {
+				setUser({});
+				setIsAuthenticated(false);
+			}
+
+			if (response.status === 200) {
+				const data = await response.data;
+				setUser(data.user);
+				setIsAuthenticated(true);
+			}
+		} catch (error) {
+			console.error("Token verification failed:", error);
+			setUser({});
+			setIsAuthenticated(false);
+		}
+	};
+
+	useEffect(() => {
+		verifyToken();
+	}, []);
+
+	const getDashboard = () => {
+		if (user?.role === "doctor") return <DoctorDashboard />;
+		if (user?.role === "healthcare") return <HealthcareDashboard />;
+		return <UserDashboard />;
+	};
+
+	return (
+		<AppContext.Provider
+			value={{ user, setUser, isAuthenticated, setIsAuthenticated }}
+		>
+			<Router>
+				<Navbar
+					isAuthenticated={isAuthenticated}
+					userName={user?.email || ""}
+				/>
+				<Routes>
+					{/* Public Routes */}
+					<Route
+						path="/"
+						element={
+							isAuthenticated ? getDashboard() : <FrontPage />
+						}
+					/>
+					<Route path="/user/login" element={<UserLogin />} />
+					<Route path="/user/signup" element={<UserSignup />} />
+
+					{/* Protected Routes for Users */}
+					<Route
+						element={
+							<UserProtectedRoutes
+								isAuthenticated={
+									isAuthenticated && user.role === "user"
+								}
+							/>
+						}
+					>
+						<Route
+							path="/user/prescription/upload"
+							element={<UploadPresc />}
+						/>
+						<Route
+							path="/user/prescription/history"
+							element={<UserPrescriptionHistory />}
+						/>
+						<Route
+							path="/user/prescription"
+							element={<DigitalPrescription />}
+						/>
+						<Route
+							path="/user/testresults/upload"
+							element={<UploadTestRes />}
+						/>
+						<Route
+							path="/user/testresults/history"
+							element={<UserTestResults />}
+						/>
+						<Route
+							path="/user/testresults"
+							element={<DigitalTestReport />}
+						/>
+					</Route>
+
+					{/* Doctor Routes */}
+					<Route path="/doctor/login" element={<DoctorLogin />} />
+					<Route path="/doctor/signup" element={<DoctorSignup />} />
+					<Route
+						element={
+							<UserProtectedRoutes
+								isAuthenticated={
+									isAuthenticated && user.role === "doctor"
+								}
+							/>
+						}
+					>
+						<Route
+							path="/doctor/dashboard"
+							element={<DoctorDashboard />}
+						/>
+						<Route
+							path="/doctor/users"
+							element={<FindUserByPhoneAndOTP />}
+						/>
+						<Route
+							path="/doctor/user/otp"
+							element={<OTPVerification />}
+						/>
+					</Route>
+
+					{/* Healthcare Routes */}
+					<Route
+						path="/healthcare/login"
+						element={<HealthcareLogin />}
+					/>
+					<Route
+						path="/healthcare/signup"
+						element={<HealthcareSignup />}
+					/>
+					<Route
+						element={
+							<UserProtectedRoutes
+								isAuthenticated={
+									isAuthenticated &&
+									user.role === "healthcare"
+								}
+							/>
+						}
+					>
+						<Route
+							path="/healthcare/dashboard"
+							element={<HealthcareDashboard />}
+						/>
+						{/* Add additional healthcare routes here */}
+					</Route>
+				</Routes>
+				<ToastContainer />
+			</Router>
+		</AppContext.Provider>
+	);
 }
 
 export default App;
