@@ -45,6 +45,7 @@ const LoginForm: React.FC = () => {
 			setTimeout(() => navigate("/"), 2000);
 		} catch (error) {
 			console.error("Error during sign up:", error);
+			toast.error("Login failed!");
 		}
 	};
 
