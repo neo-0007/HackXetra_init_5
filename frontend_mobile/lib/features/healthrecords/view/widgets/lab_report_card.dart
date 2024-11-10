@@ -10,7 +10,7 @@ class LabReportCard extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return Container(
         color: Colors.white,
-        height: screenSize.height / 4.7,
+        height: screenSize.width /3.3,
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

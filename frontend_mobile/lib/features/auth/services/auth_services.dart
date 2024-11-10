@@ -29,8 +29,8 @@ class AuthServices {
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
-        "email":email,
-        "password":password,
+        "email": email,
+        "password": password,
       }),
     );
     if (res.statusCode == 200) {
@@ -55,5 +55,20 @@ class AuthServices {
   Future<void> clearToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
+  }
+
+  Future<String> decodeToken(String token) async {
+    final res = await http.post(
+      Uri.parse(ApiConstants.verifyToken),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':'Bearer $token'
+      },
+    );
+    if (res.statusCode == 200) {
+      return jsonDecode(res.body)['user']['id'];
+    } else {
+      return '';
+    }
   }
 }
