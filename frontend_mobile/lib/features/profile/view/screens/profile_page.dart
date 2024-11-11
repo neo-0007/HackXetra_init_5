@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/features/auth/services/auth_services.dart';
-import 'package:frontend_mobile/features/auth/view/screens/login_page.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_button.dart';
 import 'package:frontend_mobile/features/common/widgets/big_text.dart';
 import 'package:frontend_mobile/features/profile/view/widgets/data_info_card.dart';
