@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/features/auth/services/auth_services.dart';
+import 'package:frontend_mobile/features/auth/view/screens/login_page.dart';
 import 'package:frontend_mobile/features/auth/view/widgets/auth_button.dart';
 import 'package:frontend_mobile/features/common/widgets/big_text.dart';
 import 'package:frontend_mobile/features/profile/view/widgets/data_info_card.dart';
 import 'package:frontend_mobile/features/profile/view/widgets/profile_card.dart';
+import 'package:frontend_mobile/routes/route_constants.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -47,7 +51,10 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(
                   height: 100,
                 ),
-                AuthButton(buttonText: 'Logout', onPressed: (){})
+                AuthButton(buttonText: 'Logout', onPressed: (){
+                AuthServices().clearToken();
+                context.goNamed(RouteConstants.login);
+                })
                 //Logout button
               ],
             ),

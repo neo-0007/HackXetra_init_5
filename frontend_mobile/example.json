@@ -1,0 +1,20 @@
+{
+    "doctor": {
+        "name": " Dr. J. PALAVSMMM, MD",
+        "phone": "null"
+    },
+    "prescription": [
+        {
+            "dosage": "null",
+            "frequency":"Three time a day",
+            "name": "null",
+            "timing": "Before Food"
+        },
+        {
+            "dosage": "null",
+            "frequency": "Thrice a day",
+            "name": "null",
+            "timing": "After Food"
+        }
+    ]
+}
