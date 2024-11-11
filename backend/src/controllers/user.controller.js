@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs";
 import { generateAccessToken, verifyToken } from "../utills/jwt.js";
 
 import dotenv from "dotenv";
+import { Prescription } from "../models/prescription.js";
 dotenv.config();
 
 // Define the structuredPrescriptionOutput function
@@ -466,12 +467,79 @@ export const decodeToken = async (req, res) => {
 			message: "Token decoded successfully",
 			user: {
 				id: user._id,
-				name: user.name,
+				name: user.firstName + " " + user.lastName,
 				email: user.email,
 				role: user.role,
+				gender: user.gender,
 			},
 		});
 	} catch (error) {
 		res.status(500).json({ message: "Error decoding token", error });
+	}
+};
+
+// Backend - addPrescription handler function
+export const addPrescription = async (req, res) => {
+	try {
+		const { user_id, doctor, prescription, medicalCondition } = req.body;
+
+		const newPrescription = await Prescription.create({
+			user_id,
+			doctor,
+			prescription,
+			medicalCondition,
+		});
+
+		res.status(201).json({
+			message: "Prescription added successfully",
+			prescription: newPrescription,
+		});
+	} catch (error) {
+		res.status(500).json({ message: "Error adding prescription", error });
+	}
+};
+
+export const getAllPrescriptionsByID = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const prescriptions = await Prescription.find({ user_id: id });
+		res.json({
+			message: "Prescriptions fetched successfully",
+			prescriptions,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Error fetching prescriptions",
+			error,
+		});
+	}
+};
+
+export const getPrescriptionByID = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const prescription = await Prescription.findById(id);
+		if (!prescription) {
+			return res.status(404).json({ message: "Prescription not found" });
+		}
+		res.json({
+			message: "Prescription fetched successfully",
+			prescription,
+		});
+	} catch (error) {
+		res.status(500).json({ message: "Error fetching prescription", error });
+	}
+};
+
+export const getUserByID = async (req, res) => {
+	try {
+		const id = req.params.id;
+		const user = await User.findById(id).select("-password");
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		res.json({ message: "User fetched", user });
+	} catch (error) {
+		res.status(500).json({ message: "Error fetching user", error });
 	}
 };

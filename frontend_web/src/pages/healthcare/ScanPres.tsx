@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { DiGitBranch } from 'react-icons/di';
-import { useLocation } from 'react-router-dom';
 import { MoonLoader } from 'react-spinners';
 
 interface FileType {
@@ -11,12 +10,25 @@ interface FileType {
     file: File;
 }
 
+interface IPrescription {
+    prescription: {
+        name: string;
+        dosage: string;
+        frequency: string;
+        timing: string;
+    }[];
+    doctor: {
+        name: string;
+        phone: string;
+    };
+}
+
 // FileUpload Component
-const UploadPresc = () => {
+const ScanAndGet = () => {
+    const [Prescription, setPrescription] = useState<IPrescription | null>(null);
     const [file, setFile] = useState<FileType | null>(null);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
-    const location = useLocation(); // Move useLocation hook here
     const [loading, setLoading] = useState(false);
 
     const handleFileUpload = (uploadedFile: File) => {
@@ -48,13 +60,11 @@ const UploadPresc = () => {
     };
 
     const handleSubmit = async () => {
-        setLoading(true);
         if (file) {
-            const searchParams = new URLSearchParams(location.search); // Use location here
-            const id = searchParams.get('id');
             console.log('Uploading file:', file);
             setUploadError(null);
             setUploadSuccess(null);
+            setLoading(true);
 
             // Create FormData object
             const formData = new FormData();
@@ -75,41 +85,13 @@ const UploadPresc = () => {
 
                 const data = await response.json();
                 setUploadSuccess('Successfully uploaded!');
-                console.log('Successfully uploaded:', data);
-
-                // Prepare data to store in /prescription/add
-                const addData = {
-                    user_id: id,
-                    doctor: data.doctor,
-                    prescription: data.prescription,
-                    medicalCondition: data.medicalCondition
-                };
-
-                // Second POST request to store prescription in database
-                const addResponse = await fetch('http://localhost:3000/api/v1/user/prescription/add/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                    body: JSON.stringify(addData),
-                });
-
-                if (!addResponse.ok) {
-                    throw new Error(`Failed to add: ${addResponse.statusText}`);
-                    setLoading(false);
-                    alert('Something went wrong!');
-                }
-
-                const addResult = await addResponse.json();
                 setLoading(false);
-                alert('Prescription added successfully!');
-                console.log('Successfully added prescription:', addResult);
-
+                setPrescription(data);
+                console.log('Successfully uploaded:', data);
             } catch (error) {
+                setLoading(false);
                 setUploadError('Error during uploading, please try again.');
                 console.error('Error during uploading:', error);
-                setLoading(false);
             }
         }
     };
@@ -135,7 +117,7 @@ const UploadPresc = () => {
 
     return (
         <>
-       {(loading)?(<div className='flex items-center justify-center my-28'><MoonLoader /></div>):(<div className="flex flex-col items-center space-y-6">
+        {(!Prescription)?((loading)?(<div className='flex items-center justify-center my-28'><MoonLoader /></div>):(<div className="flex flex-col items-center space-y-6">
             <h2 className="text-xl font-semibold">Upload Your File</h2>
 
             {/* Drag and Drop Area */}
@@ -158,22 +140,55 @@ const UploadPresc = () => {
                 </label>
             </div>
 
+            
+
             {/* File List */}
             {file && <FileList file={file} />}
 
-            {/* Upload Button */}
+            {/* Scan Button */}
             {file && file.progress === 100 && (
                 <button
                     onClick={handleSubmit}
                     className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
-                    Upload
+                    Scan
                 </button>
             )}
 
             {/* Display Upload Result */}
             {uploadError && <p className="text-red-500 mt-4">{uploadError}</p>}
             {uploadSuccess && <p className="text-green-500 mt-4">{uploadSuccess}</p>}
+        </div>)):(<div>
+            
+
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+            <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
+                {/* Header */}
+                <div className="border-b pb-4 mb-6">
+                    <h1 className="text-2xl font-bold text-blue-600">Digital Prescription</h1>
+                    <p className="text-gray-500 mt-1">Issued by {Prescription?.doctor.name}</p>
+                </div>
+
+                {/* Prescription Details */}
+                <div className="mb-6">
+                    <h2 className="text-lg font-semibold text-gray-700">Prescription</h2>
+                    <div className="mt-4 space-y-3">
+                        {Prescription?.prescription.map((medicine, index) => (
+                            <div key={index} className="sm:flex max-sm:space-x-4 justify-between">
+                                <p className="text-gray-600">{index + 1}. {medicine.name}</p>
+                                <p className="text-gray-600">{medicine.dosage}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Footer with Doctor's Signature */}
+                <div className="border-t pt-4 text-right">
+                    <p className="text-gray-600 font-semibold">{Prescription?.doctor.name}</p>
+                </div>
+            </div>
+        </div>
+
         </div>)}
         </>
     );
@@ -204,4 +219,4 @@ const FileList = ({ file }: { file: FileType }) => {
     );
 };
 
-export default UploadPresc;
+export default ScanAndGet;

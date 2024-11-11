@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineFileAdd, AiOutlineFileSearch } from 'react-icons/ai';
 import { BsFileEarmarkMedical } from 'react-icons/bs';
 import { RiFileList2Line } from 'react-icons/ri';
@@ -11,7 +11,10 @@ interface IUSER {
     role: string;
 }
 
-const UserDashboard = () => {
+const UserDashboardHealthcare = () => {
+    const location = useLocation();
+   const searchParams = new URLSearchParams(location.search);
+   const id = searchParams.get('id');
     const [user, setUser] = useState<IUSER | null>(null);
     const navigate = useNavigate();
 
@@ -35,29 +38,16 @@ const UserDashboard = () => {
             }
         }
         fetchUserDetails();
-    }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        window.location.reload(); // Refresh the page after logout
-    };
+    }, [])
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-100 via-white to-blue-100 flex flex-col items-center py-10">
             <h1 className="text-4xl font-bold text-blue-700 mb-10">Welcome to Your Dashboard</h1>
             
-            {/* Logout Button */}
-            <div
-                onClick={handleLogout}
-                className="mb-8 px-6 py-2 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600 transition-colors"
-            >
-                Logout
-            </div>
-
             <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                 {/* Upload Prescription Button */}
                 <div
-                    onClick={() => navigate(`/user/prescription/upload?id=${user?.id}`)}
+                    onClick={() => navigate('/user/prescription/upload')}
                     className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center cursor-pointer hover:shadow-2xl transition-transform transform hover:scale-105"
                 >
                     <AiOutlineFileAdd className="text-5xl text-blue-500 mb-4" />
@@ -95,4 +85,4 @@ const UserDashboard = () => {
     );
 };
 
-export default UserDashboard;
+export default UserDashboardHealthcare;

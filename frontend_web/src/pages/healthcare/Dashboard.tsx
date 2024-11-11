@@ -4,16 +4,32 @@ import { Link } from 'react-router-dom';
 import { FaSearch, FaClipboardList, FaUserMd } from 'react-icons/fa';
 
 const HealthcareDashboard = () => {
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.reload(); // Refresh the page after logout
+};
+
   return (
     <div className="flex flex-col items-center p-6 bg-gray-50 min-h-screen">
       <h2 className="text-3xl font-semibold text-gray-800 mb-8">Healthcare Dashboard</h2>
-      
+       {/* Logout Button */}
+       <div
+                onClick={handleLogout}
+                className="mb-8 px-6 py-2 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600 transition-colors"
+            >
+                Logout
+            </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-screen-lg">
+      <Link to="/healthcare/scan" className="flex flex-col items-center p-6 bg-white shadow-lg rounded-lg hover:shadow-xl transition duration-300 text-center">
+          <FaSearch className="text-4xl text-blue-500 mb-4"/>
+          <h3 className="text-xl font-medium text-gray-800">Scan Prescription</h3>
+          <p className="text-gray-600 mt-2">Scan a prescription to get in digital format</p>
+        </Link>
         {/* Find User by Phone */}
         <Link to="/healthcare/users" className="flex flex-col items-center p-6 bg-white shadow-lg rounded-lg hover:shadow-xl transition duration-300 text-center">
           <FaSearch className="text-4xl text-blue-500 mb-4"/>
-          <h3 className="text-xl font-medium text-gray-800">Find User by Phone</h3>
-          <p className="text-gray-600 mt-2">Search for patients using their phone number</p>
+          <h3 className="text-xl font-medium text-gray-800">Find User by Email or Phone</h3>
+          <p className="text-gray-600 mt-2">Search for patients using their phone number or email</p>
         </Link>
 
         {/* View Patient History */}

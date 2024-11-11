@@ -12,7 +12,7 @@ interface FileType {
 }
 
 // FileUpload Component
-const UploadPresc = () => {
+const UploadPrescHealthcare = () => {
     const [file, setFile] = useState<FileType | null>(null);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
@@ -204,4 +204,4 @@ const FileList = ({ file }: { file: FileType }) => {
     );
 };
 
-export default UploadPresc;
+export default UploadPrescHealthcare;

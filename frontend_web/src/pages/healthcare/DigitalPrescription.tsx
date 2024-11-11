@@ -19,14 +19,13 @@ interface IPrescription {
 }
 
 interface IUSER {
-    id: string;
+    _id: string;
     name: string;
     email: string;
     role: string;
-    gender: string;
 }
 
-const DigitalPrescription = () => {
+const HealthDigitalPrescription = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get('id');
@@ -37,7 +36,7 @@ const DigitalPrescription = () => {
  useEffect(() => {
     const fetchPrescriptions = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/user/prescription/byID/${id}`, {
+            const response = await fetch(`http://localhost:3000/api/v1/user/prescription/byID/672fdf9dc50db94bf3b2d8e9`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -61,7 +60,6 @@ useEffect(() => {
     const fetchUserDetails = async () => {
         try {
             const response = await fetch('http://localhost:3000/api/v1/user/verify', {
-                method: "POST",
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
@@ -70,7 +68,7 @@ useEffect(() => {
                 throw new Error('Failed to fetch user details');
             }
             const data = await response.json();
-            setUser(data.user);
+            setUser(data);
             console.log('User Details:', data);
         } catch (error) {
             console.error(error);
@@ -81,8 +79,7 @@ useEffect(() => {
 
 
     return (
-        <>
-        {(<div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
             <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
                 {/* Header */}
                 <div className="border-b pb-4 mb-6">
@@ -95,8 +92,10 @@ useEffect(() => {
                     {/* Patient Info */}
                     <div>
                         <h2 className="text-lg font-semibold text-gray-700">Patient's Details</h2>
-                        <p className="text-gray-600">Name: {user?.name}</p>
-                        <p className="text-gray-600">Gender: {user?.gender}</p>
+                        <p className="text-gray-600">Name: {Prescription?.user_id}</p>
+                        <p className="text-gray-600">Age: {Prescription?.user_id}</p>
+                        <p className="text-gray-600">Gender: {Prescription?.user_id}</p>
+                        <p className="text-gray-600">Date: {Prescription?.user_id}</p>
                     </div>
                 </div>
 
@@ -118,9 +117,8 @@ useEffect(() => {
                     <p className="text-gray-600 font-semibold">{Prescription?.doctor.name}</p>
                 </div>
             </div>
-        </div>)}
-        </>
+        </div>
     );
 };
 
-export default DigitalPrescription;
+export default HealthDigitalPrescription;
