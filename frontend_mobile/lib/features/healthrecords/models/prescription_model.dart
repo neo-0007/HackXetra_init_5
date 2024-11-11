@@ -30,8 +30,6 @@ class Prescription {
   final String? userId;
   final List<PrescriptionItem>? prescription;
   final String? medicalCondition;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
 
   Prescription({
     this.doctor,
@@ -39,8 +37,6 @@ class Prescription {
     this.userId,
     this.prescription,
     this.medicalCondition,
-    this.createdAt,
-    this.updatedAt,
   });
 
   factory Prescription.fromJson(Map<String, dynamic> json) {
@@ -52,8 +48,6 @@ class Prescription {
           ?.map((p) => PrescriptionItem.fromJson(p))
           .toList(),
       medicalCondition: json['medicalCondition'],
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
@@ -64,8 +58,6 @@ class Prescription {
       'user_id': userId,
       'prescription': prescription?.map((p) => p.toJson()).toList(),
       'medicalCondition': medicalCondition,
-      'createdAt': createdAt?.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 }
@@ -123,14 +115,12 @@ class Medicine {
   final String? dosage;
   final String? frequency;
   final String? timing;
-  final String? form;  // Adding the form as a new nullable property
 
   Medicine({
     this.name,
     this.dosage,
     this.frequency,
     this.timing,
-    this.form,
   });
 
   factory Medicine.fromJson(Map<String, dynamic> json) {
@@ -139,7 +129,6 @@ class Medicine {
       dosage: json['dosage'],
       frequency: json['frequency'],
       timing: json['timing'],
-      form: json['form'],  // Allow form to be nullable
     );
   }
 
@@ -149,7 +138,6 @@ class Medicine {
       'dosage': dosage,
       'frequency': frequency,
       'timing': timing,
-      'form': form,
     };
   }
 }

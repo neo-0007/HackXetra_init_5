@@ -44,43 +44,25 @@ class HealthRecordServices {
     }
   }
 
-  // Future<List<Prescription>> getAllPrescriptions(String id) async {
-  //   try {
-  //     final response =
-  //         await http.get(Uri.parse('${ApiConstants.getAllPrescriptions}/$id'));
-  //     if (response.statusCode == 200) {
-  //       final List<dynamic> prescriptions = jsonDecode(response.body);
-  //       print('Prescriptions: $prescriptions');
-  //       return prescriptions.map((e) => Prescription.fromJson(e)).toList();
-  //     } else {
-  //       print('Error: ${response.body}');
-  //       return [];
-  //     }
-  //   } catch (e) {
-  //     print('Error: $e');
-  //     return [];
-  //   }
-  // }
   Future<List<Prescription>> getAllPrescriptions(String id) async {
-  try {
-    final response = await http.get(Uri.parse('${ApiConstants.getAllPrescriptions}/$id'));
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      
-      // Access the 'prescriptions' list within the JSON response
-      final List<dynamic> prescriptionsJson = jsonResponse['prescriptions'];
-      
-      // Parse each element in the list to a Prescription object
-      return prescriptionsJson.map((e) => Prescription.fromJson(e)).toList();
-    } else {
-      return [];
-    }
-  } catch (e) {
-    print('Error fetching prescriptions: $e');
-    return [];
-  }
-}
+    try {
+      final response =
+          await http.get(Uri.parse('${ApiConstants.getAllPrescriptions}/$id'));
+      if (response.statusCode == 200) {
+        final Map<String,dynamic> jsonResponse = jsonDecode(response.body);
 
+        final List<Prescription> prescriptions = jsonResponse['prescriptions']
+            .map<Prescription>((prescription) => Prescription.fromJson(prescription))
+            .toList();
+
+        return prescriptions;
+      }else{
+        throw Exception('Error fetching prescriptions');
+      }
+    } catch (e) {
+      throw Exception('Error fetching prescriptions: $e');
+    }
+  }
 
   Future<Prescription> getPrescription(String id) async {
     try {
@@ -92,10 +74,10 @@ class HealthRecordServices {
         return Prescription.fromJson(prescription);
       } else {
         print('Error: ${response.body}');
-        return Prescription();
+        throw Exception('Error fetching prescription');
       }
     } catch (e) {
-      return Prescription();
+      throw Exception('Error fetching prescription: $e');
     }
   }
 }

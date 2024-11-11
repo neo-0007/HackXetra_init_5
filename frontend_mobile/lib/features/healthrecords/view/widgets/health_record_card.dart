@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/features/healthrecords/models/prescription_model.dart';
 import 'package:frontend_mobile/features/healthrecords/services/health_record_services.dart';
+import 'package:frontend_mobile/features/healthrecords/view/screens/prescription_page.dart';
 import 'package:frontend_mobile/features/healthrecords/view/widgets/health_record_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -22,9 +23,10 @@ late Prescription prescription;
 
   Future<void> getPrescription() async {
     try {
-      final Prescription? fetchedPrescription = await HealthRecordServices().getPrescription(widget.recordId);
-      setState(() {
-        prescription = fetchedPrescription!;
+      final Prescription fetchedPrescription = await HealthRecordServices().getPrescription(widget.recordId);
+ 
+       setState(() {
+        prescription = fetchedPrescription;
         isLoading = false;
       });
     } catch (e) {
@@ -32,6 +34,8 @@ late Prescription prescription;
         isLoading = false;
       });
       print('Error fetching prescription: $e');
+      throw Exception('Error fetching prescription: $e');
+      
     }
   }
 
@@ -56,6 +60,8 @@ late Prescription prescription;
             children: [
               Text(
                 widget.recordTitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.poppins(
                     fontSize: 17.25,
                     fontWeight: FontWeight.w600,
@@ -81,6 +87,11 @@ late Prescription prescription;
                     child: HealthRecordButton(
                       buttonText: 'Digital Record',
                       onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PrescriptionPage(
+                                    )));
                       }
                     ),
                   ),
